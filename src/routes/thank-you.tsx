@@ -1,5 +1,7 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, Link } from "@tanstack/react-router";
+import { ArrowLeft, Check } from "lucide-react";
 import { SiteFooter, SiteHeader } from "@/components/SiteHeader";
+import { buttonVariants } from "@/components/ui/button";
 
 export const Route = createFileRoute("/thank-you")({
   head: () => ({
@@ -27,17 +29,25 @@ function ThankYouPage() {
     <div className="min-h-screen bg-background">
       <SiteHeader />
 
-      <main className="mx-auto max-w-3xl px-4 py-10">
-        <h1 className="text-3xl font-bold tracking-tight text-foreground">
-          Thanks, we got your request
-        </h1>
-        <p className="mt-4 text-base text-muted-foreground">
-          We'll reply within one business day. Need us sooner? Call{" "}
-          <a href="tel:+14255550100" className="font-semibold text-primary underline">
-            (425) 555-0100
-          </a>
-          .
-        </p>
+      <main className="flex min-h-[60vh] items-center bg-secondary px-4 py-16 sm:px-6">
+        <div className="mx-auto w-full max-w-2xl rounded-lg border border-border bg-card p-6 text-center shadow-lg sm:p-10">
+          <div className="mx-auto flex size-14 items-center justify-center rounded-full bg-accent text-accent-foreground">
+            <Check aria-hidden="true" />
+          </div>
+          <h1 className="mt-6 font-heading text-3xl font-extrabold text-foreground sm:text-4xl">
+            Thanks, we got your request
+          </h1>
+          <p className="mx-auto mt-4 max-w-xl text-base leading-relaxed text-muted-foreground">
+            We'll reply within one business day. Need us sooner? Call{" "}
+            <a href="tel:+14255550100" className="font-semibold text-primary underline underline-offset-4">
+              (425) 555-0100
+            </a>
+            .
+          </p>
+          <Link to="/" className={buttonVariants({ variant: "outline", size: "lg", className: "mt-7" })}>
+            <ArrowLeft aria-hidden="true" />Back to home
+          </Link>
+        </div>
       </main>
 
       <SiteFooter />

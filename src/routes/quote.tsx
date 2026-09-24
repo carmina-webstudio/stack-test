@@ -1,5 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
+import { Clock3, PhoneCall } from "lucide-react";
 import { SiteFooter, SiteHeader } from "@/components/SiteHeader";
+import { Button } from "@/components/ui/button";
 
 export const Route = createFileRoute("/quote")({
   head: () => ({
@@ -30,17 +32,31 @@ function QuotePage() {
     <div className="min-h-screen bg-background">
       <SiteHeader />
 
-      <main className="mx-auto max-w-3xl px-4 py-10">
-        <h1 className="text-3xl font-bold tracking-tight text-foreground">Get a Free Quote</h1>
+      <main className="bg-secondary py-12 sm:py-20">
+        <div className="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
+          <h1 className="font-heading text-4xl font-extrabold text-foreground sm:text-5xl">Get a Free Quote</h1>
+          <div className="mt-8 grid items-start gap-6 lg:grid-cols-[0.75fr_1.5fr]">
+            <aside className="order-first rounded-lg bg-primary p-6 text-primary-foreground shadow-lg lg:sticky lg:top-24">
+              <div className="flex size-12 items-center justify-center rounded-md bg-accent text-accent-foreground">
+                <PhoneCall aria-hidden="true" />
+              </div>
+              <p className="mt-5 font-heading text-xl font-bold">Prefer to talk?</p>
+              <a href="tel:+14255550100" className="mt-2 block text-lg font-bold underline underline-offset-4 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-foreground">
+                Call (425) 555-0100
+              </a>
+              <p className="mt-5 flex items-center gap-2 text-sm text-primary-foreground/80">
+                <Clock3 className="size-4" aria-hidden="true" /> We reply within one business day.
+              </p>
+            </aside>
 
-        <form
-          name="quote"
-          method="POST"
-          action="/thank-you"
-          data-netlify="true"
-          netlify-honeypot="bot-field"
-          className="mt-6 space-y-4"
-        >
+            <form
+              name="quote"
+              method="POST"
+              action="/thank-you"
+              data-netlify="true"
+              netlify-honeypot="bot-field"
+              className="rounded-lg border border-border bg-card p-5 shadow-lg sm:p-8"
+            >
           <input type="hidden" name="form-name" value="quote" />
           <p className="hidden">
             <label>
@@ -48,6 +64,7 @@ function QuotePage() {
             </label>
           </p>
 
+          <div className="grid gap-5 sm:grid-cols-2">
           <label className="block text-sm font-semibold text-foreground">
             Name
             <input type="text" name="name" required className={fieldClass} />
@@ -76,19 +93,19 @@ function QuotePage() {
             City
             <input type="text" name="city" className={fieldClass} />
           </label>
+          </div>
 
-          <label className="block text-sm font-semibold text-foreground">
+          <label className="mt-5 block text-sm font-semibold text-foreground">
             Message
             <textarea name="message" rows={4} className={fieldClass} />
           </label>
 
-          <button
-            type="submit"
-            className="inline-flex w-full items-center justify-center rounded-md bg-primary px-5 py-3 text-base font-semibold text-primary-foreground hover:bg-primary/90 sm:w-auto"
-          >
+          <Button type="submit" size="lg" className="mt-6 w-full text-base sm:w-auto">
             Send Request
-          </button>
+          </Button>
         </form>
+          </div>
+        </div>
       </main>
 
       <SiteFooter />
