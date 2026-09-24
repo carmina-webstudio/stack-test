@@ -1,7 +1,7 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { ArrowLeft, Check } from "lucide-react";
 import { SiteFooter, SiteHeader } from "@/components/SiteHeader";
-import { Button } from "@/components/ui/button";
+import { buttonVariants } from "@/components/ui/button";
 
 export const Route = createFileRoute("/thank-you")({
   head: () => ({
@@ -44,9 +44,9 @@ function ThankYouPage() {
             </a>
             .
           </p>
-          <Button asChild variant="outline" size="lg" className="mt-7">
-            <Link to="/"><ArrowLeft aria-hidden="true" />Back to home</Link>
-          </Button>
+          <Link to="/" className={buttonVariants({ variant: "outline", size: "lg", className: "mt-7" })}>
+            <ArrowLeft aria-hidden="true" />Back to home
+          </Link>
         </div>
       </main>
 

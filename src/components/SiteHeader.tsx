@@ -1,7 +1,7 @@
 import { Link } from "@tanstack/react-router";
 import { Menu, Phone } from "lucide-react";
 import { useState } from "react";
-import { Button } from "@/components/ui/button";
+import { Button, buttonVariants } from "@/components/ui/button";
 
 const navigation = [
   { label: "Home", href: "/" },
@@ -58,12 +58,13 @@ export function SiteHeader() {
           <Menu aria-hidden="true" />
         </Button>
 
-        <Button asChild size="lg" className="shrink-0 px-3 sm:px-5">
-          <a href="tel:+14255550100">
-            <Phone aria-hidden="true" />
-            <span>Call Now</span>
-          </a>
-        </Button>
+        <a
+          href="tel:+14255550100"
+          className={buttonVariants({ size: "lg", className: "shrink-0 px-3 sm:px-5" })}
+        >
+          <Phone aria-hidden="true" />
+          <span>Call Now</span>
+        </a>
       </div>
 
       <nav

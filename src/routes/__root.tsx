@@ -12,7 +12,7 @@ import { useEffect, type ReactNode } from "react";
 import appCss from "../styles.css?url";
 import { reportLovableError } from "../lib/lovable-error-reporting";
 import { SiteFooter, SiteHeader } from "@/components/SiteHeader";
-import { Button } from "@/components/ui/button";
+import { buttonVariants } from "@/components/ui/button";
 
 function NotFoundComponent() {
   return (
@@ -25,9 +25,7 @@ function NotFoundComponent() {
           <p className="mt-3 text-muted-foreground">
             The page you're looking for doesn't exist or has been moved.
           </p>
-          <Button asChild size="lg" className="mt-7">
-            <Link to="/">Go home</Link>
-          </Button>
+          <Link to="/" className={buttonVariants({ size: "lg", className: "mt-7" })}>Go home</Link>
         </div>
       </main>
       <SiteFooter />

@@ -1,7 +1,7 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { ClipboardCheck, Flower2, Leaf, PhoneCall, Shovel, Sprout } from "lucide-react";
 import { SiteFooter, SiteHeader } from "@/components/SiteHeader";
-import { Button } from "@/components/ui/button";
+import { buttonVariants } from "@/components/ui/button";
 import {
   Accordion,
   AccordionContent,
@@ -104,12 +104,18 @@ function Index() {
                 Lawn care, garden design and yard cleanup for homes in Bothell and nearby cities.
               </p>
               <div className="mt-8 flex flex-col gap-3 sm:flex-row">
-                <Button asChild size="lg" className="bg-accent text-accent-foreground shadow-lg hover:bg-accent/90">
-                  <a href="tel:+14255550100"><PhoneCall aria-hidden="true" />Call Now</a>
-                </Button>
-                <Button asChild size="lg" variant="outline" className="border-primary-foreground/60 bg-transparent text-primary-foreground hover:bg-primary-foreground hover:text-primary">
-                  <Link to="/quote">Get a Quote</Link>
-                </Button>
+                <a
+                  href="tel:+14255550100"
+                  className={buttonVariants({ size: "lg", className: "bg-accent text-accent-foreground shadow-lg hover:bg-accent/90" })}
+                >
+                  <PhoneCall aria-hidden="true" />Call Now
+                </a>
+                <Link
+                  to="/quote"
+                  className={buttonVariants({ variant: "outline", size: "lg", className: "border-primary-foreground/60 bg-transparent text-primary-foreground hover:bg-primary-foreground hover:text-primary" })}
+                >
+                  Get a Quote
+                </Link>
               </div>
               <p className="mt-5 text-sm font-semibold text-primary-foreground/80">
                 Free estimates · Replies within one business day
