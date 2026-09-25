@@ -1,0 +1,15 @@
+# Netlify settings for this site (read automatically when the repo is connected).
+[build]
+  command = "npm run build"
+  # All pages are pre-built as static HTML; Netlify serves them straight from here.
+  publish = ".output/public"
+
+[build.environment]
+  NODE_VERSION = "22"
+
+# Any address that doesn't match a real page gets the 404 page (with a 404 status),
+# instead of Netlify's generic error.
+[[redirects]]
+  from = "/*"
+  to = "/404/index.html"
+  status = 404

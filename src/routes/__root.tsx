@@ -1,7 +1,6 @@
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import {
   Outlet,
-  Link,
   createRootRouteWithContext,
   useRouter,
   HeadContent,
@@ -11,26 +10,10 @@ import { useEffect, type ReactNode } from "react";
 
 import appCss from "../styles.css?url";
 import { reportLovableError } from "../lib/lovable-error-reporting";
-import { SiteFooter, SiteHeader } from "@/components/SiteHeader";
-import { buttonVariants } from "@/components/ui/button";
+import { NotFoundPage } from "@/components/NotFoundPage";
 
 function NotFoundComponent() {
-  return (
-    <div className="min-h-screen bg-secondary">
-      <SiteHeader />
-      <main className="flex min-h-[60vh] items-center justify-center px-4 py-16">
-        <div className="max-w-md text-center">
-          <p className="font-heading text-7xl font-extrabold text-primary">404</p>
-          <h1 className="mt-4 font-heading text-3xl font-extrabold text-foreground">Page not found</h1>
-          <p className="mt-3 text-muted-foreground">
-            The page you're looking for doesn't exist or has been moved.
-          </p>
-          <Link to="/" className={buttonVariants({ size: "lg", className: "mt-7" })}>Go home</Link>
-        </div>
-      </main>
-      <SiteFooter />
-    </div>
-  );
+  return <NotFoundPage />;
 }
 
 function ErrorComponent({ error, reset }: { error: Error; reset: () => void }) {
