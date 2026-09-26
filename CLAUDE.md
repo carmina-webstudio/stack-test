@@ -37,3 +37,4 @@ Carmina runs a small website business for local service companies (Bothell, WA).
 2. Check the built HTML in `.output/public`: page text, phone links, FAQ answers and JSON-LD schema are present without JavaScript.
 3. Look at the pages at 375px, 768px, 1440px and zoomed out (e.g. 2880px wide) and fix anything that looks off.
 4. Say in the PR what you checked.
+5. Screenshots go in the PR description, never in a commit — not even temporarily. A file added and then deleted still stays in git history forever, and cleaning it out would mean rewriting `main`, which breaks Lovable's sync. Also send the screenshots in your chat reply. If you can't attach images to the PR without committing them, describe what each one shows in the PR and ask Carmina to drag them into the description (or a comment) on GitHub.
