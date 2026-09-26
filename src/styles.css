@@ -155,6 +155,11 @@
     outline-offset: 3px;
   }
 
+  /* Mouse and touch focus never shows an outline; only keyboard focus does. */
+  :focus:not(:focus-visible) {
+    outline: none;
+  }
+
   html {
     scroll-behavior: smooth;
   }
@@ -178,21 +183,21 @@
     repeating-radial-gradient(ellipse at 0% 90%, transparent 0 42px, currentColor 43px 44px, transparent 45px 84px);
 }
 
+/* Sections slide up slightly as they scroll in. Movement only, no fading: text is always
+   full strength, so content never looks greyed out or disabled. */
 @supports (animation-timeline: view()) {
   .reveal {
-    animation: reveal-up linear both;
+    animation: reveal-up ease-out both;
     animation-timeline: view();
-    animation-range: entry 0% entry 100%;
+    animation-range: entry 0% entry 60%;
   }
 }
 
 @keyframes reveal-up {
   from {
-    opacity: 0;
-    transform: translateY(18px);
+    transform: translateY(12px);
   }
   to {
-    opacity: 1;
     transform: translateY(0);
   }
 }
@@ -200,6 +205,10 @@
 @media (prefers-reduced-motion: reduce) {
   html {
     scroll-behavior: auto;
+  }
+
+  .reveal {
+    animation: none;
   }
 
   *,

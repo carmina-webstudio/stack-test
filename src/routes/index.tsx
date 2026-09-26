@@ -231,7 +231,13 @@ function Index() {
             <div className="mt-8 border-t border-border">
               {faqs.map((faq) => (
                 <details key={faq.q} className="group border-b border-border">
-                  <summary className="flex min-h-14 cursor-pointer list-none items-center justify-between gap-4 py-4 text-base font-bold text-foreground [&::-webkit-details-marker]:hidden">
+                  {/* preventDefault on mousedown stops a mouse click from focusing the question
+                      (so no outline appears); the click still opens it, and keyboard users still
+                      get the focus outline. */}
+                  <summary
+                    onMouseDown={(event) => event.preventDefault()}
+                    className="flex min-h-14 cursor-pointer list-none items-center justify-between gap-4 py-4 text-base font-bold text-foreground [&::-webkit-details-marker]:hidden"
+                  >
                     {faq.q}
                     <ChevronDown
                       aria-hidden="true"
