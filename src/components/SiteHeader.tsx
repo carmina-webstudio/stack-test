@@ -79,15 +79,20 @@ export function SiteHeader() {
         <a
           href={PHONE_HREF}
           aria-label={`Call ${PHONE_DISPLAY}`}
-          className={buttonVariants({ size: "icon", className: "size-11 md:hidden" })}
+          className={buttonVariants({
+            size: "icon",
+            className: "size-11 md:hidden [&_svg]:size-5",
+          })}
         >
           <Phone aria-hidden="true" />
         </a>
+        {/* Same size, shape and icon size as the call button, in a quieter green outline style.
+            No amber hover: phones keep the hover colour after a tap. */}
         <Button
           type="button"
-          variant="ghost"
+          variant="outline"
           size="icon"
-          className="size-11 md:hidden [&_svg]:size-6"
+          className="size-11 border-primary/30 text-primary shadow-none hover:bg-primary/10 hover:text-primary md:hidden [&_svg]:size-5"
           aria-label={menuOpen ? "Close menu" : "Open menu"}
           aria-expanded={menuOpen}
           aria-controls="mobile-navigation"
