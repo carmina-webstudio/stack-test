@@ -9,13 +9,20 @@ Token use: one session per task. Once the PR for this task is merged, say the se
 
 ## How changes flow
 - Lovable builds and edits this site and syncs with the `main` branch. Never commit directly to `main`, never force-push, never rewrite history.
-- Work on a branch and open a pull request. Carmina reviews it (and the Netlify deploy preview, once Netlify is connected) and merges it herself.
+- Carmina decides what to change. You make the change on a branch, open the PR, and check the Netlify deploy preview (the link is in the Netlify bot's comment on the PR). If you can't open the preview, say so.
+- Send her the preview link. Merge only after she writes "approve".
+- PRs into `main`: use **Squash and merge**, then delete the branch.
 - One pull request per task. Keep changes focused; don't reformat or touch unrelated files.
 - In the PR description, list what changed and why in plain language, and what she should check.
+
+## Publishing
+- Never push or commit to `production`.
+- When Carmina says "publish": open a PR from `main` into `production` and send her the Netlify preview link. After she writes "approve", merge it with a **merge commit** (never squash). Each publish costs 15 Netlify credits.
 
 ## Stack facts (don't break these)
 - TanStack Start (React) + Tailwind v4, created by Lovable. `@lovable.dev/vite-tanstack-config` sets up the build; don't add the plugins it already includes.
 - Hosting is **Netlify**, not Lovable or Cloudflare. `netlify.toml` publishes the pre-rendered static pages from `.output/public`. Every page must be listed in `tanstackStart.pages` in `vite.config.ts` so it's pre-rendered.
+- `netlify.toml` must keep `NITRO_PRESET = "cloudflare-module"`. Without it, the build fails on Netlify.
 - No Lovable backend features (Lovable Cloud, Lovable Emails, databases, auth).
 - Forms use **Netlify Forms**: `data-netlify="true"`, hidden `form-name` input, honeypot `bot-field`, and a matching static copy in `public/__forms.html`. Keep the two in sync whenever form fields change.
 - `buttonVariants()` runs through `cn()`, so a passed className overrides the variant's defaults. Use the `accent` variant for the main call-to-action.
