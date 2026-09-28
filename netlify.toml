@@ -6,6 +6,7 @@
 
 [build.environment]
   NODE_VERSION = "22"
+  NITRO_PRESET = "cloudflare-module"
 
 # Any address that doesn't match a real page gets the 404 page (with a 404 status),
 # instead of Netlify's generic error.
