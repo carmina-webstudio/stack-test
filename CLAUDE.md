@@ -32,6 +32,7 @@ Token use: one session per task. Once the PR for this task is merged, say the se
 ## Content rules
 - Use only content Carmina provides. Never invent reviews, testimonials, prices, licenses, certifications, years in business or other claims. If something is missing, leave a clearly marked placeholder and say so.
 - Every page keeps `<meta name="robots" content="noindex, nofollow">` until Carmina says the site is going live.
+- The favicon must be the client's logo or initials. Never ship Lovable's default favicon.
 
 ## UX rules (local service websites)
 - First screen: who, what, where, and how to contact, readable in 5 seconds. Phone number visible as text. Main button uses the accent color and stands out.
