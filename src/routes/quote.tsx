@@ -137,8 +137,8 @@ function Field({
         {label}
       </label>
       {children}
-      {extra}
       <FieldError id={`quote-${field}-error`} message={error} />
+      {extra}
     </div>
   );
 }
@@ -355,10 +355,10 @@ function QuotePage() {
                   extra={
                     <p
                       id="quote-message-count"
-                      className={`mt-1.5 text-right text-sm tabular-nums ${messageLength > MESSAGE_MAX ? "font-semibold text-destructive" : "text-muted-foreground"}`}
+                      className={`mt-1.5 text-sm tabular-nums ${messageLength > MESSAGE_MAX ? "font-semibold text-destructive" : "text-muted-foreground"}`}
                     >
-                      {messageLength.toLocaleString("en-US")} /{" "}
-                      {MESSAGE_MAX.toLocaleString("en-US")} characters
+                      Minimum {MESSAGE_MIN} characters · {messageLength.toLocaleString("en-US")} /{" "}
+                      {MESSAGE_MAX.toLocaleString("en-US")}
                     </p>
                   }
                 >

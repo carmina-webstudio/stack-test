@@ -27,7 +27,7 @@ export const Route = createFileRoute("/thank-you")({
 });
 
 const STEPS = [
-  "We review your request today",
+  "We will review your request",
   "We call or email you within one business day",
   "Free estimate, no obligation",
 ];
