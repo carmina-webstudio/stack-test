@@ -25,6 +25,8 @@ Token use: one session per task. Once the PR for this task is merged, say the se
 - `netlify.toml` must keep `NITRO_PRESET = "cloudflare-module"`. Without it, the build fails on Netlify.
 - No Lovable backend features (Lovable Cloud, Lovable Emails, databases, auth).
 - Forms use **Netlify Forms**: `data-netlify="true"`, hidden `form-name` input, honeypot `bot-field`, and a matching static copy in `public/__forms.html`. Keep the two in sync whenever form fields change.
+- Forms submit with fetch and then route to the site's own thank-you page; don't rely on Netlify's action-page lookup. Validate every field inline.
+- The owner email subject is set from the form values through a hidden 'subject' input (also in public/__forms.html).
 - No confirmation email to the customer and no email service (Resend, SMTP, Netlify functions). The thank-you page is the customer's confirmation; the owner gets Netlify's built-in form notification. Don't add one unless these rules change.
 - `buttonVariants()` runs through `cn()`, so a passed className overrides the variant's defaults. Use the `accent` variant for the main call-to-action.
 - Business phone number and display text live in `src/components/SiteHeader.tsx` (`PHONE_HREF`, `PHONE_DISPLAY`).
