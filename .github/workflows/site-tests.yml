@@ -1,0 +1,82 @@
+# Site tests: build, static site check and browser tests (Chromium + WebKit) on every pull request
+# into main or production, and on every push to main (Lovable can commit straight to main).
+# The Playwright report and full-page screenshots are uploaded as an artifact, kept 7 days.
+name: Site tests
+
+on:
+  pull_request:
+    branches: [main, production]
+  push:
+    branches: [main]
+
+permissions:
+  contents: read
+
+# A new push to the same PR (or branch) cancels the older run.
+concurrency:
+  group: site-tests-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  test:
+    name: ${{ matrix.browser }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    strategy:
+      fail-fast: false
+      matrix:
+        # One job per browser, side by side, so a full run stays under about 10 minutes.
+        browser: [chromium, webkit]
+    env:
+      CI: "true"
+      PW_BROWSERS: ${{ matrix.browser }}
+      NITRO_PRESET: cloudflare-module
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Cache npm downloads
+        uses: actions/cache@v4
+        with:
+          path: ~/.npm
+          key: npm-${{ runner.os }}-${{ hashFiles('package.json') }}
+          restore-keys: npm-${{ runner.os }}-
+
+      - name: Install
+        run: npm install --no-audit --no-fund
+
+      - name: Build
+        run: npm run build
+
+      - name: Static site check
+        run: npm run check
+
+      - name: Playwright version
+        id: pw
+        run: echo "version=$(npx playwright --version | awk '{print $2}')" >> "$GITHUB_OUTPUT"
+
+      - name: Cache Playwright browsers
+        uses: actions/cache@v4
+        with:
+          path: ~/.cache/ms-playwright
+          key: playwright-${{ runner.os }}-${{ matrix.browser }}-${{ steps.pw.outputs.version }}
+
+      - name: Install ${{ matrix.browser }}
+        run: npx playwright install --with-deps ${{ matrix.browser }}
+
+      - name: Browser tests
+        run: npm run test:e2e
+
+      - name: Upload report and screenshots
+        if: ${{ !cancelled() }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: site-tests-${{ matrix.browser }}
+          path: |
+            playwright-report/
+            test-results/
+          retention-days: 7
+          if-no-files-found: ignore

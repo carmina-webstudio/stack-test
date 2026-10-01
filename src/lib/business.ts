@@ -2,10 +2,17 @@
 // description, canonical, Open Graph), sitemap.xml and the robots.txt "Sitemap:" line all
 // read from here, so they can't drift apart. For a new client, edit this file first.
 //
-// Only use facts the client has given. Anything marked PLACEHOLDER is not filled in yet:
-// empty values are left out of the schema and head tags automatically (never invent them).
+// Keep this file plain data: no imports, no enums, only type annotations that can be erased.
+// The site check (scripts/site-check.ts) loads it straight into Node with type stripping, and
+// the browser tests (tests/) read their expected values from it.
+//
+// Only use facts the client has given. A value that isn't filled in yet reads
+// "[PLACEHOLDER: what's needed]": it's left out of the schema and head tags automatically
+// (never invent it), `npm run check` lists it, and it blocks going live.
+// An empty value ("" or []) means "the client doesn't have / doesn't want this".
 
 export type Service = { name: string; description: string };
+export type Faq = { q: string; a: string };
 
 /** One opening-hours rule, e.g. { days: ["Monday", "Friday"], opens: "08:00", closes: "17:00" }. */
 export type OpeningHours = {
@@ -17,7 +24,24 @@ export type OpeningHours = {
 /** A place the business serves. "City" for a town, "AdministrativeArea" for a county or region. */
 export type ServiceArea = { type: "City" | "AdministrativeArea"; name: string };
 
+/** The one placeholder marker, e.g. "[PLACEHOLDER: ZIP code]". */
+export type Placeholder = `[PLACEHOLDER: ${string}]`;
+
+export function isPlaceholder(value: unknown): value is Placeholder {
+  return typeof value === "string" && value.startsWith("[PLACEHOLDER:");
+}
+
+/** The value, or "" while it's still a placeholder (so it's left out of the page). */
+export function filled(value: string): string {
+  return isPlaceholder(value) ? "" : value;
+}
+
 export const business = {
+  // "spec": a preview for the client. Every page is noindex, placeholders are warnings.
+  // "live": the real site on the client's domain. Public pages are indexable, and the site check
+  // fails on any placeholder, test data, *.netlify.app address or the placeholder favicon.
+  siteStatus: "spec" as "spec" | "live",
+
   name: "Test Landscaping Co",
   // schema.org type. Use a more specific one when it fits the client (e.g. "Plumber",
   // "Electrician", "RoofingContractor", "HVACBusiness"); "LocalBusiness" is always valid.
@@ -34,11 +58,12 @@ export const business = {
   },
 
   address: {
-    streetAddress: "", // PLACEHOLDER: leave empty for a service-area business that hides it
+    // "" for a service-area business that hides its address.
+    streetAddress: "[PLACEHOLDER: street address, or empty if the client hides it]",
     city: "Bothell",
     region: "WA",
     regionName: "Washington",
-    postalCode: "", // PLACEHOLDER
+    postalCode: "[PLACEHOLDER: ZIP code]",
     country: "US",
   },
 
@@ -61,8 +86,8 @@ export const business = {
     { name: "Yard Cleanup", description: "Leaf removal, pruning and debris hauling." },
   ] satisfies Service[],
 
-  // PLACEHOLDER: the client's opening hours. Left out of the schema while empty.
-  hours: [] as OpeningHours[],
+  // The client's opening hours. Left out of the schema while a placeholder or empty.
+  hours: "[PLACEHOLDER: opening hours, e.g. Mon-Fri 8:00-17:00]" as OpeningHours[] | Placeholder,
 
   // Live address of the site, no trailing slash. Change this when the client's domain goes live:
   // canonical tags, Open Graph URLs, schema, sitemap.xml and robots.txt all follow.
@@ -71,13 +96,27 @@ export const business = {
   // Paths inside public/. logo: the client's logo (a square PNG of at least 112x112 is best
   // for Google; the favicon is the stand-in until the client sends one).
   logo: "/favicon.svg",
-  // PLACEHOLDER: 1200x630 image for link previews (a photo of the client's real work, or their
-  // logo on a brand-color background), e.g. "/share.jpg". Left out while empty.
-  shareImage: "",
+  // 1200x630 image for link previews (a photo of the client's real work, or their logo on a
+  // brand-color background), e.g. "/share.jpg". Left out while a placeholder.
+  shareImage: "[PLACEHOLDER: 1200x630 share image in public/, e.g. /share.jpg]",
 
-  // PLACEHOLDER: the client's profile links (Google Business Profile, Facebook, Yelp, ...).
-  // Left out of the schema while empty.
-  sameAs: [] as string[],
+  // The client's profile links (Google Business Profile, Facebook, Yelp, ...).
+  // Left out of the schema while a placeholder or empty.
+  sameAs: "[PLACEHOLDER: Google Business Profile, Facebook, Yelp links]" as string[] | Placeholder,
+
+  // Questions and answers for the home page FAQ and its FAQPage schema. Only answers the client
+  // has given.
+  faqs: [
+    {
+      q: "What area do you serve?",
+      a: "Bothell and nearby cities in King and Snohomish counties.",
+    },
+    { q: "Are estimates free?", a: "Yes, estimates are free." },
+    {
+      q: "How fast do you respond?",
+      a: "We reply to quote requests within one business day.",
+    },
+  ] satisfies Faq[],
 };
 
 /** Absolute URL on this site, e.g. absoluteUrl("/quote"). */

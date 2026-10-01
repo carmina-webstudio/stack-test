@@ -1,6 +1,6 @@
 import { Link } from "@tanstack/react-router";
 import { FileText, Menu, Phone, X } from "lucide-react";
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Button, buttonVariants } from "@/components/ui/button";
 import { business } from "@/lib/business";
 
@@ -38,19 +38,40 @@ function NavItem({
 
 export function SiteHeader() {
   const [menuOpen, setMenuOpen] = useState(false);
+  const menuButton = useRef<HTMLButtonElement>(null);
   const close = () => setMenuOpen(false);
+
+  // While the menu is open: Escape closes it (focus goes back to the menu button) and the page
+  // behind it doesn't scroll.
+  useEffect(() => {
+    if (!menuOpen) return;
+    const onKeyDown = (event: KeyboardEvent) => {
+      if (event.key !== "Escape") return;
+      setMenuOpen(false);
+      menuButton.current?.focus();
+    };
+    const root = document.documentElement;
+    const previousOverflow = root.style.overflow;
+    root.style.overflow = "hidden";
+    document.addEventListener("keydown", onKeyDown);
+    return () => {
+      root.style.overflow = previousOverflow;
+      document.removeEventListener("keydown", onKeyDown);
+    };
+  }, [menuOpen]);
 
   return (
     <header className="sticky top-0 z-50 border-b border-border/70 bg-background/95 shadow-sm backdrop-blur">
       <div className="mx-auto flex min-h-16 max-w-6xl items-center gap-2 px-4 sm:min-h-[3.75rem] sm:px-6 lg:px-8">
         <Link
           to="/"
-          className="mr-auto truncate whitespace-nowrap font-heading text-base font-extrabold text-foreground sm:text-[1.0625rem]"
+          className="mr-auto flex min-h-11 min-w-0 items-center font-heading text-base font-extrabold text-foreground sm:text-[1.0625rem]"
         >
-          {business.name}
+          <span className="truncate whitespace-nowrap">{business.name}</span>
         </Link>
 
-        <nav className="hidden items-center gap-6 md:flex" aria-label="Primary navigation">
+        {/* Desktop (1024px+): links in the header. Phones and tablets use the menu button. */}
+        <nav className="hidden items-center gap-6 lg:flex" aria-label="Primary navigation">
           {navigation.map((item) => (
             <NavItem
               key={item.label}
@@ -88,10 +109,11 @@ export function SiteHeader() {
         {/* Same size, shape and icon size as the call button, in a quieter green outline style.
             No amber hover: phones keep the hover colour after a tap. */}
         <Button
+          ref={menuButton}
           type="button"
           variant="outline"
           size="icon"
-          className="size-11 border-primary/30 text-primary shadow-none hover:bg-primary/10 hover:text-primary md:hidden [&_svg]:size-5"
+          className="size-11 border-primary/30 text-primary shadow-none hover:bg-primary/10 hover:text-primary lg:hidden [&_svg]:size-5"
           aria-label={menuOpen ? "Close menu" : "Open menu"}
           aria-expanded={menuOpen}
           aria-controls="mobile-navigation"
@@ -104,9 +126,11 @@ export function SiteHeader() {
       <nav
         id="mobile-navigation"
         aria-label="Mobile navigation"
-        className={`grid border-t border-border bg-background transition-[grid-template-rows] duration-300 md:hidden ${menuOpen ? "grid-rows-[1fr]" : "grid-rows-[0fr] border-t-0"}`}
+        // inert while closed: the hidden links can't be reached with Tab or a screen reader.
+        inert={!menuOpen}
+        className={`grid border-t border-border bg-background transition-[grid-template-rows,visibility] duration-300 lg:hidden ${menuOpen ? "visible grid-rows-[1fr]" : "invisible grid-rows-[0fr] border-t-0"}`}
       >
-        <div className="overflow-hidden">
+        <div className="max-h-[calc(100dvh-4rem)] overflow-y-auto">
           <div className="mx-auto flex max-w-6xl flex-col px-4 py-2">
             {navigation
               .filter((item) => item.href !== "/quote")
@@ -140,7 +164,11 @@ export function SiteHeader() {
 /** Phones only: always-visible bar at the bottom of the screen with the two main actions. */
 export function MobileActionBar() {
   return (
-    <div className="fixed inset-x-0 bottom-0 z-50 border-t border-border bg-background/95 p-3 shadow-[0_-4px_12px_rgba(0,0,0,0.08)] backdrop-blur md:hidden">
+    <div
+      role="region"
+      aria-label="Call or get a quote"
+      className="fixed inset-x-0 bottom-0 z-50 border-t border-border bg-background/95 p-3 shadow-[0_-4px_12px_rgba(0,0,0,0.08)] backdrop-blur md:hidden"
+    >
       <div className="grid grid-cols-2 gap-3">
         <a
           href={business.phone.href}
@@ -167,12 +195,17 @@ export function SiteFooter() {
           <div className="space-y-2 text-sm">
             <p className="font-heading text-lg font-extrabold">{business.name}</p>
             <p>
-              <a href={business.phone.href} className="font-semibold underline underline-offset-4">
+              <a
+                href={business.phone.href}
+                className="inline-flex min-h-11 items-center font-semibold underline underline-offset-4"
+              >
                 {business.phone.display}
               </a>
             </p>
             <p>Serving {business.areaServed.summary}</p>
-            <p>© {business.name}</p>
+            <p>
+              © {new Date().getFullYear()} {business.name}
+            </p>
           </div>
           <nav
             className="flex flex-wrap content-start gap-x-6 gap-y-1 text-sm font-semibold"
@@ -182,7 +215,7 @@ export function SiteFooter() {
               <NavItem
                 key={item.label}
                 item={item}
-                className="inline-flex min-h-11 items-center underline-offset-4 hover:underline"
+                className="inline-flex min-h-11 min-w-11 items-center justify-center underline-offset-4 hover:underline"
               />
             ))}
           </nav>

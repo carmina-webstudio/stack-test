@@ -1,12 +1,17 @@
 # Netlify settings for this site (read automatically when the repo is connected).
 [build]
-  command = "npm run build"
+  # Build, then run the static site check (scripts/site-check.ts). Any FAIL stops the deploy, so
+  # the live site keeps its last good version (failed deploys cost no credits). No [context.*]
+  # overrides, so this applies to every deploy: production, deploy previews and branches.
+  command = "npm run build && npm run check"
   # All pages are pre-built as static HTML; Netlify serves them straight from here.
   publish = ".output/public"
 
 [build.environment]
   NODE_VERSION = "22"
   NITRO_PRESET = "cloudflare-module"
+  # The browser tests run in GitHub Actions only; Netlify never downloads browsers.
+  PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD = "1"
 
 # Any address that doesn't match a real page gets the 404 page (with a 404 status),
 # instead of Netlify's generic error.
