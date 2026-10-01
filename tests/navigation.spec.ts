@@ -2,7 +2,7 @@
 
 import { expect, test, type Page } from "@playwright/test";
 import { cta, desktopNavFrom, homeSections, nav, pages } from "./site.config.ts";
-import { open, waitForHydration } from "./helpers.ts";
+import { open, waitForHydration, waitForScrollEnd } from "./helpers.ts";
 
 const home = pages[0]!;
 const header = (page: Page) => page.getByRole("banner");
@@ -139,6 +139,7 @@ test("header stays visible on scroll and doesn't cover a section you jump to", a
       .locator(`[id="${section.id}"]`)
       .getByRole("heading", { name: section.heading })
       .first();
+    await waitForScrollEnd(page);
     await expect(heading).toBeInViewport();
     const headerBottom =
       (await header(page).boundingBox())!.y + (await header(page).boundingBox())!.height;

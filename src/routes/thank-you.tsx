@@ -36,11 +36,13 @@ function ThankYouPage() {
   const raw = useSyncExternalStore(subscribe, readQuoteSummaryRaw, () => null);
   const summary = useMemo(() => parseQuoteSummary(raw), [raw]);
 
+  // Flex column: on short pages the main area grows, so the footer sits at the bottom of the
+  // screen instead of leaving an empty band below it.
   return (
-    <div className="min-h-screen bg-background">
+    <div className="flex min-h-screen flex-col bg-background">
       <SiteHeader />
 
-      <main className="bg-secondary pb-12 sm:pb-16">
+      <main className="flex-1 bg-secondary pb-12 sm:pb-16">
         {/* Top band: same green gradient and pattern as the home page hero. */}
         <section className="hero-pattern relative overflow-hidden bg-hero px-4 pb-20 pt-10 text-center text-primary-foreground sm:px-6 sm:pb-20 sm:pt-12">
           <div className="relative mx-auto max-w-2xl">

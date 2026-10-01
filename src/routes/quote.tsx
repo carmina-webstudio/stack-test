@@ -223,11 +223,13 @@ function QuotePage() {
   const sending = status === "sending";
   const messageLength = values.message.length;
 
+  // Flex column: on short pages the main area grows, so the footer sits at the bottom of the
+  // screen instead of leaving an empty band below it.
   return (
-    <div className="min-h-screen bg-background">
+    <div className="flex min-h-screen flex-col bg-background">
       <SiteHeader />
 
-      <main className="bg-secondary py-10 sm:py-12">
+      <main className="flex-1 bg-secondary py-10 sm:py-12">
         <div className="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
           <h1 className="font-heading text-3xl font-extrabold text-foreground sm:text-4xl">
             Get a Free Quote

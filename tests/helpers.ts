@@ -148,3 +148,14 @@ export async function scrollToBottom(page: Page) {
     () => Math.abs(window.scrollY + window.innerHeight - document.documentElement.scrollHeight) < 2,
   );
 }
+
+/** Waits until the page has stopped scrolling (the site uses smooth scrolling for #links). */
+export async function waitForScrollEnd(page: Page) {
+  await page.waitForFunction(
+    () =>
+      new Promise<boolean>((resolve) => {
+        const start = window.scrollY;
+        setTimeout(() => resolve(window.scrollY === start), 150);
+      }),
+  );
+}

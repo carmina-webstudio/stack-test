@@ -85,7 +85,7 @@ export function SiteHeader() {
         <a
           href={business.phone.href}
           className={buttonVariants({
-            className: "hidden h-11 shrink-0 px-4 text-[0.8125rem] md:inline-flex",
+            className: "hidden h-11 shrink-0 px-4 text-[0.8125rem] md:inline-flex lg:ml-4",
           })}
         >
           <Phone aria-hidden="true" />
@@ -208,14 +208,14 @@ export function SiteFooter() {
             </p>
           </div>
           <nav
-            className="flex flex-wrap content-start gap-x-6 gap-y-1 text-sm font-semibold"
+            className="-mx-2 flex flex-wrap content-start gap-x-2 gap-y-1 text-sm font-semibold"
             aria-label="Footer navigation"
           >
             {navigation.map((item) => (
               <NavItem
                 key={item.label}
                 item={item}
-                className="inline-flex min-h-11 min-w-11 items-center justify-center underline-offset-4 hover:underline"
+                className="inline-flex min-h-11 min-w-11 items-center px-2 underline-offset-4 hover:underline"
               />
             ))}
           </nav>

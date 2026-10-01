@@ -143,6 +143,16 @@ for (const config of pages) {
       }
     });
 
+    test("footer sits at the bottom of the screen, no empty band below it", async ({ page }) => {
+      await open(page, config.path);
+      await scrollToBottom(page);
+      const gap = await page.getByRole("contentinfo").evaluate((footer) => {
+        const r = footer.getBoundingClientRect();
+        return Math.round(window.innerHeight - r.bottom);
+      });
+      expect(gap, "empty space below the footer (px)").toBeLessThanOrEqual(1);
+    });
+
     test("full-page screenshot for review", async ({ page }, testInfo) => {
       await open(page, config.path);
       // Scroll through once so scroll-driven reveals have run, then back to the top.
