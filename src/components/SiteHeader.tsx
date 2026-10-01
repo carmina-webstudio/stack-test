@@ -2,10 +2,7 @@ import { Link } from "@tanstack/react-router";
 import { FileText, Menu, Phone, X } from "lucide-react";
 import { useState } from "react";
 import { Button, buttonVariants } from "@/components/ui/button";
-
-// Business details used across the header, footer and mobile call bar.
-export const PHONE_DISPLAY = "(425) 555-0100";
-export const PHONE_HREF = "tel:+14255550100";
+import { business } from "@/lib/business";
 
 const navigation = [
   { label: "Home", href: "/" },
@@ -50,7 +47,7 @@ export function SiteHeader() {
           to="/"
           className="mr-auto truncate whitespace-nowrap font-heading text-base font-extrabold text-foreground sm:text-[1.0625rem]"
         >
-          Test Landscaping Co
+          {business.name}
         </Link>
 
         <nav className="hidden items-center gap-6 md:flex" aria-label="Primary navigation">
@@ -65,22 +62,22 @@ export function SiteHeader() {
 
         {/* Desktop and tablet: full Call Now button with the number spelled out on wide screens. */}
         <a
-          href={PHONE_HREF}
+          href={business.phone.href}
           className={buttonVariants({
             className: "hidden h-11 shrink-0 px-4 text-[0.8125rem] md:inline-flex",
           })}
         >
           <Phone aria-hidden="true" />
           <span>
-            Call Now<span className="hidden lg:inline"> · {PHONE_DISPLAY}</span>
+            Call Now<span className="hidden lg:inline"> · {business.phone.display}</span>
           </span>
         </a>
 
         {/* Phones: compact call icon + menu button at the far right. The big Call Now lives in
             the sticky bottom bar, where a thumb can reach it. */}
         <a
-          href={PHONE_HREF}
-          aria-label={`Call ${PHONE_DISPLAY}`}
+          href={business.phone.href}
+          aria-label={`Call ${business.phone.display}`}
           className={buttonVariants({
             size: "icon",
             className: "size-11 md:hidden [&_svg]:size-5",
@@ -146,7 +143,7 @@ export function MobileActionBar() {
     <div className="fixed inset-x-0 bottom-0 z-50 border-t border-border bg-background/95 p-3 shadow-[0_-4px_12px_rgba(0,0,0,0.08)] backdrop-blur md:hidden">
       <div className="grid grid-cols-2 gap-3">
         <a
-          href={PHONE_HREF}
+          href={business.phone.href}
           className={buttonVariants({ variant: "accent", size: "lg", className: "w-full px-3" })}
         >
           <Phone aria-hidden="true" />
@@ -168,14 +165,14 @@ export function SiteFooter() {
       <footer className="border-t border-border bg-primary pb-24 text-primary-foreground md:pb-0">
         <div className="mx-auto grid max-w-6xl gap-8 px-4 py-10 sm:px-6 md:grid-cols-[1fr_auto] lg:px-8">
           <div className="space-y-2 text-sm">
-            <p className="font-heading text-lg font-extrabold">Test Landscaping Co</p>
+            <p className="font-heading text-lg font-extrabold">{business.name}</p>
             <p>
-              <a href={PHONE_HREF} className="font-semibold underline underline-offset-4">
-                {PHONE_DISPLAY}
+              <a href={business.phone.href} className="font-semibold underline underline-offset-4">
+                {business.phone.display}
               </a>
             </p>
-            <p>Serving Bothell, WA and nearby cities</p>
-            <p>© Test Landscaping Co</p>
+            <p>Serving {business.areaServed.summary}</p>
+            <p>© {business.name}</p>
           </div>
           <nav
             className="flex flex-wrap content-start gap-x-6 gap-y-1 text-sm font-semibold"

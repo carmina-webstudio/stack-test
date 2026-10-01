@@ -1,7 +1,8 @@
 import { Link } from "@tanstack/react-router";
 import { PhoneCall } from "lucide-react";
-import { PHONE_DISPLAY, PHONE_HREF, SiteFooter, SiteHeader } from "@/components/SiteHeader";
+import { SiteFooter, SiteHeader } from "@/components/SiteHeader";
 import { buttonVariants } from "@/components/ui/button";
+import { business } from "@/lib/business";
 
 /** Shown for any address that doesn't exist (old links, typos). Keeps the visitor on the site. */
 export function NotFoundPage() {
@@ -21,9 +22,12 @@ export function NotFoundPage() {
             <Link to="/" className={buttonVariants({ size: "lg" })}>
               Go home
             </Link>
-            <a href={PHONE_HREF} className={buttonVariants({ variant: "accent", size: "lg" })}>
+            <a
+              href={business.phone.href}
+              className={buttonVariants({ variant: "accent", size: "lg" })}
+            >
               <PhoneCall aria-hidden="true" />
-              Call {PHONE_DISPLAY}
+              Call {business.phone.display}
             </a>
           </div>
         </div>

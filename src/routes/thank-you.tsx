@@ -1,28 +1,18 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { ArrowLeft, ArrowRight, ClipboardCheck, Mail, Phone } from "lucide-react";
 import { useMemo, useSyncExternalStore } from "react";
-import { PHONE_DISPLAY, PHONE_HREF, SiteFooter, SiteHeader } from "@/components/SiteHeader";
+import { SiteFooter, SiteHeader } from "@/components/SiteHeader";
 import { buttonVariants } from "@/components/ui/button";
+import { business } from "@/lib/business";
 import { parseQuoteSummary, readQuoteSummaryRaw } from "@/lib/quote-request";
+import { pageHead } from "@/lib/seo";
 
 export const Route = createFileRoute("/thank-you")({
-  head: () => ({
-    meta: [
-      { title: "Thanks, we got your request | Test Landscaping Co" },
-      {
-        name: "description",
-        content: "We'll reply to your landscaping quote request within one business day.",
-      },
-      { name: "robots", content: "noindex, nofollow" },
-      { property: "og:title", content: "Thanks, we got your request | Test Landscaping Co" },
-      {
-        property: "og:description",
-        content: "We'll reply to your landscaping quote request within one business day.",
-      },
-      { property: "og:type", content: "website" },
-      { name: "twitter:card", content: "summary" },
-    ],
-  }),
+  head: () =>
+    pageHead({
+      title: "Thanks, we got your request",
+      description: `We'll reply to your ${business.trade.toLowerCase()} quote request within one business day.`,
+    }),
   component: ThankYouPage,
 });
 
@@ -117,7 +107,7 @@ function ThankYouPage() {
             <div className="mt-8 border-t border-border pt-6">
               <p className="text-sm text-muted-foreground">Need us sooner?</p>
               <a
-                href={PHONE_HREF}
+                href={business.phone.href}
                 className={buttonVariants({
                   variant: "accent",
                   size: "lg",
@@ -126,7 +116,7 @@ function ThankYouPage() {
                 })}
               >
                 <Phone aria-hidden="true" />
-                Call {PHONE_DISPLAY}
+                Call {business.phone.display}
               </a>
               <div className="mt-4 flex flex-col gap-1 sm:flex-row sm:gap-6">
                 <Link
