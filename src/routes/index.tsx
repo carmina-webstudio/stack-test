@@ -8,22 +8,13 @@ import {
   Shovel,
   Sprout,
 } from "lucide-react";
-import { PHONE_DISPLAY, PHONE_HREF, SiteFooter, SiteHeader } from "@/components/SiteHeader";
+import { SiteFooter, SiteHeader } from "@/components/SiteHeader";
 import { buttonVariants } from "@/components/ui/button";
+import { business } from "@/lib/business";
+import { faqSchema, localBusinessSchema, pageHead, schemaGraph, serviceSchemas } from "@/lib/seo";
 
-const services = [
-  {
-    title: "Lawn Care",
-    text: "Regular mowing, edging and seasonal lawn treatments.",
-    icon: Sprout,
-  },
-  {
-    title: "Garden Design",
-    text: "Planting plans and new garden beds that fit your yard.",
-    icon: Flower2,
-  },
-  { title: "Yard Cleanup", text: "Leaf removal, pruning and debris hauling.", icon: Leaf },
-];
+// Icons for the services in business.ts, in the same order.
+const SERVICE_ICONS = [Sprout, Flower2, Leaf];
 
 const steps = [
   {
@@ -55,57 +46,17 @@ const faqs = [
   },
 ];
 
-const jsonLd = [
-  {
-    "@context": "https://schema.org",
-    "@type": "LocalBusiness",
-    name: "Test Landscaping Co",
-    telephone: "+1-425-555-0100",
-    address: {
-      "@type": "PostalAddress",
-      addressLocality: "Bothell",
-      addressRegion: "WA",
-      addressCountry: "US",
-    },
-    areaServed: "Bothell, WA and nearby cities",
-  },
-  {
-    "@context": "https://schema.org",
-    "@type": "FAQPage",
-    mainEntity: faqs.map((f) => ({
-      "@type": "Question",
-      name: f.q,
-      acceptedAnswer: { "@type": "Answer", text: f.a },
-    })),
-  },
-];
+const { address } = business;
+const heading = `${business.trade} in ${address.city}, ${address.region}`;
 
 export const Route = createFileRoute("/")({
-  head: () => ({
-    meta: [
-      { title: "Landscaping in Bothell, WA | Test Landscaping Co" },
-      {
-        name: "description",
-        content:
-          "Lawn care, garden design and yard cleanup for homes in Bothell and nearby cities.",
-      },
-      { name: "robots", content: "noindex, nofollow" },
-      { property: "og:title", content: "Landscaping in Bothell, WA | Test Landscaping Co" },
-      {
-        property: "og:description",
-        content:
-          "Lawn care, garden design and yard cleanup for homes in Bothell and nearby cities.",
-      },
-      { property: "og:type", content: "website" },
-      { name: "twitter:card", content: "summary" },
-    ],
-    scripts: [
-      {
-        type: "application/ld+json",
-        children: JSON.stringify(jsonLd),
-      },
-    ],
-  }),
+  head: () =>
+    pageHead({
+      title: heading,
+      description: business.description,
+      path: "/",
+      schema: schemaGraph(localBusinessSchema(), ...serviceSchemas(), faqSchema(faqs)),
+    }),
   component: Index,
 });
 
@@ -121,17 +72,17 @@ function Index() {
           <div className="relative mx-auto w-full max-w-6xl px-4 py-12 sm:px-6 sm:py-12 lg:px-8 lg:py-10">
             <div className="max-w-3xl lg:max-w-none">
               <p className="mb-3 text-sm font-bold uppercase tracking-widest text-accent">
-                Bothell, Washington
+                {address.city}, {address.regionName}
               </p>
               <h1 className="font-heading text-4xl font-extrabold leading-tight sm:text-4xl lg:whitespace-nowrap lg:text-[2.75rem]">
-                Landscaping in Bothell, WA
+                {heading}
               </h1>
               <p className="mt-4 max-w-2xl text-lg leading-relaxed text-primary-foreground/85 sm:text-lg">
-                Lawn care, garden design and yard cleanup for homes in Bothell and nearby cities.
+                {business.description}
               </p>
               <div className="mt-7 flex flex-col gap-3 sm:mt-6 sm:flex-row">
                 <a
-                  href={PHONE_HREF}
+                  href={business.phone.href}
                   className={buttonVariants({
                     variant: "accent",
                     size: "lg",
@@ -156,10 +107,10 @@ function Index() {
               <p className="mt-5 text-base text-primary-foreground/90">
                 Or call{" "}
                 <a
-                  href={PHONE_HREF}
+                  href={business.phone.href}
                   className="font-bold text-primary-foreground underline underline-offset-4"
                 >
-                  {PHONE_DISPLAY}
+                  {business.phone.display}
                 </a>
               </p>
               <p className="mt-2 text-sm font-semibold text-primary-foreground/80">
@@ -197,22 +148,25 @@ function Index() {
           <div className="reveal mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
             <h2 className="font-heading text-3xl font-extrabold text-foreground">Services</h2>
             <div className="mt-8 grid gap-5 sm:grid-cols-3">
-              {services.map((service) => (
-                <article
-                  key={service.title}
-                  className="service-card rounded-lg border border-border bg-card p-6 shadow-sm transition duration-300 hover:-translate-y-1 hover:shadow-lg"
-                >
-                  <div className="flex size-11 items-center justify-center rounded-md bg-accent text-accent-foreground">
-                    <service.icon aria-hidden="true" />
-                  </div>
-                  <h3 className="mt-5 font-heading text-xl font-bold text-card-foreground sm:text-lg">
-                    {service.title}
-                  </h3>
-                  <p className="mt-2 text-sm leading-relaxed text-muted-foreground sm:text-base">
-                    {service.text}
-                  </p>
-                </article>
-              ))}
+              {business.services.map((service, index) => {
+                const Icon = SERVICE_ICONS[index] ?? Sprout;
+                return (
+                  <article
+                    key={service.name}
+                    className="service-card rounded-lg border border-border bg-card p-6 shadow-sm transition duration-300 hover:-translate-y-1 hover:shadow-lg"
+                  >
+                    <div className="flex size-11 items-center justify-center rounded-md bg-accent text-accent-foreground">
+                      <Icon aria-hidden="true" />
+                    </div>
+                    <h3 className="mt-5 font-heading text-xl font-bold text-card-foreground sm:text-lg">
+                      {service.name}
+                    </h3>
+                    <p className="mt-2 text-sm leading-relaxed text-muted-foreground sm:text-base">
+                      {service.description}
+                    </p>
+                  </article>
+                );
+              })}
             </div>
           </div>
         </section>

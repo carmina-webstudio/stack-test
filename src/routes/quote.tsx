@@ -1,28 +1,19 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { AlertCircle, ChevronDown, Clock3, Loader2, PhoneCall } from "lucide-react";
 import { useState, type ChangeEvent, type FormEvent, type ReactNode } from "react";
-import { PHONE_DISPLAY, PHONE_HREF, SiteFooter, SiteHeader } from "@/components/SiteHeader";
+import { SiteFooter, SiteHeader } from "@/components/SiteHeader";
 import { Button } from "@/components/ui/button";
+import { business } from "@/lib/business";
 import { saveQuoteSummary } from "@/lib/quote-request";
+import { pageHead } from "@/lib/seo";
 
 export const Route = createFileRoute("/quote")({
-  head: () => ({
-    meta: [
-      { title: "Get a Free Quote | Test Landscaping Co" },
-      {
-        name: "description",
-        content: "Request a free landscaping quote in Bothell, WA.",
-      },
-      { name: "robots", content: "noindex, nofollow" },
-      { property: "og:title", content: "Get a Free Quote | Test Landscaping Co" },
-      {
-        property: "og:description",
-        content: "Request a free landscaping quote in Bothell, WA.",
-      },
-      { property: "og:type", content: "website" },
-      { name: "twitter:card", content: "summary" },
-    ],
-  }),
+  head: () =>
+    pageHead({
+      title: "Get a Free Quote",
+      description: `Request a free ${business.trade.toLowerCase()} quote in ${business.address.city}, ${business.address.region}.`,
+      path: "/quote",
+    }),
   component: QuotePage,
 });
 
@@ -33,7 +24,8 @@ const fieldClass =
   "mt-1.5 block h-12 w-full rounded-md border border-input bg-background px-3 text-base font-normal text-foreground shadow-sm focus-visible:border-primary aria-invalid:border-destructive";
 const labelClass = "block text-sm font-semibold text-foreground";
 
-const SERVICES = ["Lawn Care", "Garden Design", "Yard Cleanup"];
+// Keep public/__forms.html in sync when the services change.
+const SERVICES = business.services.map((service) => service.name);
 const MESSAGE_MIN = 20;
 const MESSAGE_MAX = 1000;
 
@@ -244,8 +236,11 @@ function QuotePage() {
           {/* Phones and tablets: one short line, so the form starts on the first screen. */}
           <p className="mt-3 text-base text-muted-foreground lg:hidden">
             Prefer to talk?{" "}
-            <a href={PHONE_HREF} className="font-bold text-primary underline underline-offset-4">
-              Call {PHONE_DISPLAY}
+            <a
+              href={business.phone.href}
+              className="font-bold text-primary underline underline-offset-4"
+            >
+              Call {business.phone.display}
             </a>
             . We reply within one business day.
           </p>
@@ -380,8 +375,11 @@ function QuotePage() {
                   <AlertCircle aria-hidden="true" className="mt-0.5 size-4 shrink-0" />
                   <p>
                     Sorry, your request didn't go through. Please try again, or call us at{" "}
-                    <a href={PHONE_HREF} className="font-bold underline underline-offset-4">
-                      {PHONE_DISPLAY}
+                    <a
+                      href={business.phone.href}
+                      className="font-bold underline underline-offset-4"
+                    >
+                      {business.phone.display}
                     </a>
                     . Everything you typed is still here.
                   </p>
@@ -416,10 +414,10 @@ function QuotePage() {
               </div>
               <p className="mt-5 font-heading text-lg font-bold">Prefer to talk?</p>
               <a
-                href={PHONE_HREF}
+                href={business.phone.href}
                 className="mt-2 block text-lg font-bold underline underline-offset-4"
               >
-                Call {PHONE_DISPLAY}
+                Call {business.phone.display}
               </a>
               <p className="mt-5 flex items-center gap-2 text-sm text-primary-foreground/80">
                 <Clock3 className="size-4" aria-hidden="true" /> We reply within one business day.
