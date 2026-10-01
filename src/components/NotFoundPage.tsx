@@ -10,8 +10,8 @@ export function NotFoundPage() {
       <SiteHeader />
       <main className="flex min-h-[60vh] items-center justify-center px-4 py-16">
         <div className="max-w-md text-center">
-          <p className="font-heading text-7xl font-extrabold text-primary">404</p>
-          <h1 className="mt-4 font-heading text-3xl font-extrabold text-foreground">
+          <p className="font-heading text-7xl font-extrabold text-primary sm:text-6xl">404</p>
+          <h1 className="mt-4 font-heading text-3xl font-extrabold text-foreground sm:text-2xl">
             Page not found
           </h1>
           <p className="mt-3 text-muted-foreground">

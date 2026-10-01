@@ -235,9 +235,9 @@ function QuotePage() {
     <div className="min-h-screen bg-background">
       <SiteHeader />
 
-      <main className="bg-secondary py-10 sm:py-16">
+      <main className="bg-secondary py-10 sm:py-12">
         <div className="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
-          <h1 className="font-heading text-3xl font-extrabold text-foreground sm:text-5xl">
+          <h1 className="font-heading text-3xl font-extrabold text-foreground sm:text-4xl">
             Get a Free Quote
           </h1>
 
@@ -414,7 +414,7 @@ function QuotePage() {
               <div className="flex size-12 items-center justify-center rounded-md bg-accent text-accent-foreground">
                 <PhoneCall aria-hidden="true" />
               </div>
-              <p className="mt-5 font-heading text-xl font-bold">Prefer to talk?</p>
+              <p className="mt-5 font-heading text-lg font-bold">Prefer to talk?</p>
               <a
                 href={PHONE_HREF}
                 className="mt-2 block text-lg font-bold underline underline-offset-4"

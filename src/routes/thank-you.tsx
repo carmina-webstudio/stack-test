@@ -28,9 +28,14 @@ export const Route = createFileRoute("/thank-you")({
 
 const STEPS = [
   "We will review your request",
-  "We call or email you within one business day",
+  "We will call or email you within one business day",
   "Free estimate, no obligation",
 ];
+
+/** "test" → "Test": the name as typed, with a capital first letter. */
+function capitalize(name: string) {
+  return name.charAt(0).toLocaleUpperCase() + name.slice(1);
+}
 
 // sessionStorage doesn't change while this page is open, so there's nothing to subscribe to.
 const subscribe = () => () => {};
@@ -47,13 +52,13 @@ function ThankYouPage() {
 
       <main className="bg-secondary pb-12 sm:pb-16">
         {/* Top band: same green gradient and pattern as the home page hero. */}
-        <section className="hero-pattern relative overflow-hidden bg-hero px-4 pb-20 pt-10 text-center text-primary-foreground sm:px-6 sm:pb-24 sm:pt-14">
+        <section className="hero-pattern relative overflow-hidden bg-hero px-4 pb-20 pt-10 text-center text-primary-foreground sm:px-6 sm:pb-20 sm:pt-12">
           <div className="relative mx-auto max-w-2xl">
-            <div className="mx-auto flex size-16 items-center justify-center rounded-full bg-accent text-accent-foreground shadow-lg motion-safe:animate-check-pop sm:size-20">
+            <div className="mx-auto flex size-16 items-center justify-center rounded-full bg-accent text-accent-foreground shadow-lg motion-safe:animate-check-pop sm:size-[4.5rem]">
               <svg
                 viewBox="0 0 24 24"
                 aria-hidden="true"
-                className="size-9 sm:size-11"
+                className="size-9 sm:size-10"
                 fill="none"
                 stroke="currentColor"
                 strokeWidth={2.75}
@@ -63,9 +68,9 @@ function ThankYouPage() {
                 <path d="M5 12.5l4.5 4.5L19 7.5" className="motion-safe:animate-check-draw" />
               </svg>
             </div>
-            <h1 className="mt-6 text-balance font-heading text-3xl font-extrabold sm:text-5xl">
+            <h1 className="mt-6 text-balance font-heading text-3xl font-extrabold sm:mt-5 sm:text-4xl">
               {summary
-                ? `Thanks, ${summary.firstName}, we got your request`
+                ? `Thanks, ${capitalize(summary.firstName)}, we got your request`
                 : "Thanks, we got your request"}
             </h1>
           </div>
@@ -94,9 +99,7 @@ function ThankYouPage() {
               </div>
             )}
 
-            <h2 className="font-heading text-xl font-bold text-foreground sm:text-2xl">
-              What happens next
-            </h2>
+            <h2 className="font-heading text-xl font-bold text-foreground">What happens next</h2>
             <ol className="mt-5 space-y-4">
               {STEPS.map((step, index) => (
                 <li key={step} className="flex items-center gap-4">
@@ -118,7 +121,8 @@ function ThankYouPage() {
                 className={buttonVariants({
                   variant: "accent",
                   size: "lg",
-                  className: "mt-2 h-14 w-full text-lg font-bold sm:w-auto sm:px-10 [&_svg]:size-5",
+                  className:
+                    "mt-2 h-14 w-full text-lg font-bold sm:h-12 sm:w-auto sm:px-8 sm:text-base [&_svg]:size-5",
                 })}
               >
                 <Phone aria-hidden="true" />

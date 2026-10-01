@@ -118,18 +118,18 @@ function Index() {
         <section className="hero-pattern relative overflow-hidden bg-hero text-primary-foreground">
           {/* Height follows the content (no full-screen sizing), so the next section always
               peeks in below and zooming out doesn't stretch the hero. */}
-          <div className="relative mx-auto w-full max-w-6xl px-4 py-12 sm:px-6 sm:py-16 lg:px-8 lg:py-12">
+          <div className="relative mx-auto w-full max-w-6xl px-4 py-12 sm:px-6 sm:py-12 lg:px-8 lg:py-10">
             <div className="max-w-3xl lg:max-w-none">
               <p className="mb-3 text-sm font-bold uppercase tracking-widest text-accent">
                 Bothell, Washington
               </p>
-              <h1 className="font-heading text-4xl font-extrabold leading-tight sm:text-5xl lg:whitespace-nowrap lg:text-6xl">
+              <h1 className="font-heading text-4xl font-extrabold leading-tight sm:text-4xl lg:whitespace-nowrap lg:text-[2.75rem]">
                 Landscaping in Bothell, WA
               </h1>
-              <p className="mt-4 max-w-2xl text-lg leading-relaxed text-primary-foreground/85 sm:text-xl">
+              <p className="mt-4 max-w-2xl text-lg leading-relaxed text-primary-foreground/85 sm:text-lg">
                 Lawn care, garden design and yard cleanup for homes in Bothell and nearby cities.
               </p>
-              <div className="mt-7 flex flex-col gap-3 sm:flex-row">
+              <div className="mt-7 flex flex-col gap-3 sm:mt-6 sm:flex-row">
                 <a
                   href={PHONE_HREF}
                   className={buttonVariants({
@@ -169,11 +169,9 @@ function Index() {
           </div>
         </section>
 
-        <section className="bg-background py-16 sm:py-20">
+        <section className="bg-background py-16 sm:py-14">
           <div className="reveal mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
-            <h2 className="font-heading text-3xl font-extrabold text-foreground sm:text-4xl">
-              How it works
-            </h2>
+            <h2 className="font-heading text-3xl font-extrabold text-foreground">How it works</h2>
             <div className="mt-8 grid gap-8 md:grid-cols-3">
               {steps.map((step, index) => (
                 <div key={step.title} className="flex items-start gap-4">
@@ -185,7 +183,7 @@ function Index() {
                       <span className="mr-2 text-primary">0{index + 1}</span>
                       {step.title}
                     </h3>
-                    <p className="mt-1 text-sm leading-relaxed text-muted-foreground">
+                    <p className="mt-1 text-sm leading-relaxed text-muted-foreground sm:text-base">
                       {step.text}
                     </p>
                   </div>
@@ -195,11 +193,9 @@ function Index() {
           </div>
         </section>
 
-        <section id="services" className="scroll-mt-20 bg-secondary py-16 sm:py-20">
+        <section id="services" className="scroll-mt-20 bg-secondary py-16 sm:py-14">
           <div className="reveal mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
-            <h2 className="font-heading text-3xl font-extrabold text-foreground sm:text-4xl">
-              Services
-            </h2>
+            <h2 className="font-heading text-3xl font-extrabold text-foreground">Services</h2>
             <div className="mt-8 grid gap-5 sm:grid-cols-3">
               {services.map((service) => (
                 <article
@@ -209,10 +205,10 @@ function Index() {
                   <div className="flex size-11 items-center justify-center rounded-md bg-accent text-accent-foreground">
                     <service.icon aria-hidden="true" />
                   </div>
-                  <h3 className="mt-5 font-heading text-xl font-bold text-card-foreground">
+                  <h3 className="mt-5 font-heading text-xl font-bold text-card-foreground sm:text-lg">
                     {service.title}
                   </h3>
-                  <p className="mt-2 text-sm leading-relaxed text-muted-foreground">
+                  <p className="mt-2 text-sm leading-relaxed text-muted-foreground sm:text-base">
                     {service.text}
                   </p>
                 </article>
@@ -221,11 +217,9 @@ function Index() {
           </div>
         </section>
 
-        <section id="faq" className="scroll-mt-20 bg-background py-16 sm:py-20">
+        <section id="faq" className="scroll-mt-20 bg-background py-16 sm:py-14">
           <div className="reveal mx-auto max-w-3xl px-4 sm:px-6">
-            <h2 className="font-heading text-3xl font-extrabold text-foreground sm:text-4xl">
-              FAQ
-            </h2>
+            <h2 className="font-heading text-3xl font-extrabold text-foreground">FAQ</h2>
             {/* Native <details>: every answer stays in the page HTML (readable by Google and AI
                 tools even when collapsed), several can be open at once, and it works without JS. */}
             <div className="mt-8 border-t border-border">
