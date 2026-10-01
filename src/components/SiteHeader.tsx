@@ -45,20 +45,20 @@ export function SiteHeader() {
 
   return (
     <header className="sticky top-0 z-50 border-b border-border/70 bg-background/95 shadow-sm backdrop-blur">
-      <div className="mx-auto flex min-h-16 max-w-6xl items-center gap-2 px-4 sm:px-6 lg:px-8">
+      <div className="mx-auto flex min-h-16 max-w-6xl items-center gap-2 px-4 sm:min-h-[3.75rem] sm:px-6 lg:px-8">
         <Link
           to="/"
-          className="mr-auto truncate whitespace-nowrap font-heading text-base font-extrabold text-foreground sm:text-lg"
+          className="mr-auto truncate whitespace-nowrap font-heading text-base font-extrabold text-foreground sm:text-[1.0625rem]"
         >
           Test Landscaping Co
         </Link>
 
-        <nav className="hidden items-center gap-7 md:flex" aria-label="Primary navigation">
+        <nav className="hidden items-center gap-6 md:flex" aria-label="Primary navigation">
           {navigation.map((item) => (
             <NavItem
               key={item.label}
               item={item}
-              className="text-sm font-semibold text-muted-foreground transition-colors hover:text-primary"
+              className="text-[0.8125rem] font-semibold text-muted-foreground transition-colors hover:text-primary"
             />
           ))}
         </nav>
@@ -66,7 +66,9 @@ export function SiteHeader() {
         {/* Desktop and tablet: full Call Now button with the number spelled out on wide screens. */}
         <a
           href={PHONE_HREF}
-          className={buttonVariants({ className: "hidden h-11 shrink-0 px-5 md:inline-flex" })}
+          className={buttonVariants({
+            className: "hidden h-11 shrink-0 px-4 text-[0.8125rem] md:inline-flex",
+          })}
         >
           <Phone aria-hidden="true" />
           <span>
