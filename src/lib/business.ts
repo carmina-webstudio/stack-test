@@ -104,6 +104,10 @@ export const business = {
   // Left out of the schema while a placeholder or empty.
   sameAs: "[PLACEHOLDER: Google Business Profile, Facebook, Yelp links]" as string[] | Placeholder,
 
+  // Promises the client has confirmed in writing, e.g. "Licensed and insured", "No obligation".
+  // The site check (L15) fails if a page makes a promise like these that isn't listed here.
+  claims: [] as string[],
+
   // Questions and answers for the home page FAQ and its FAQPage schema. Only answers the client
   // has given.
   faqs: [

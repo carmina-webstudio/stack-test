@@ -84,5 +84,6 @@ Every new lesson adds a line here AND a check or test in the same PR.
 - Lovable's accordion dropped FAQ answers from the HTML → native `<details>`, answers in the HTML and in FAQPage schema. Check L6; tests "FAQ" and "JavaScript off".
 - Lovable SEO review 2026-10-01: 404 had no description, no page had og:image or og:url → Check L3.
 - PR #14: short pages (quote, thank-you, 404) left an empty band under the footer on tall screens → page wrapper is a flex column with a growing `<main>`. Test "footer sits at the bottom of the screen".
+- PR #14: the thank-you page promised "no obligation", which the client never gave → only promises listed in `business.claims` may appear on a page. Check L15.
 - Lovable can commit straight to `main` without a PR (its framework update on 2026-10-01 changed TanStack versions and `__root.tsx`) → GitHub Actions also runs on every push to `main`.
 - Test form submissions use only @example.com addresses or Carmina's own inbox (a real submit emails the owner). Tests intercept every POST; the site-tester submits once on the deploy preview only.

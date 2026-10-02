@@ -978,9 +978,35 @@ const placeholders: { where: string; what: string }[] = [];
 }
 
 // ---------------------------------------------------------------------------------------------
+// L15 no promises the client hasn't confirmed (content rule; "no obligation" on the thank-you
+// page, PR #14)
+
+if (built) {
+  const problems: Problem[] = [];
+  const CLAIMS =
+    /\b(no[- ]obligation|licensed|insured|bonded|certified|accredited|guarantee[ds]?|warrant(y|ies)|\d+\+? years|years of experience|since (19|20)\d\d|family[- ]owned|award[- ]winning|top[- ]rated|best|#1|number one|\d(\.\d)?[- ]star|trusted by|satisfaction)\b|#1/gi;
+  const confirmed = business.claims.join(" ").toLowerCase();
+  for (const page of htmlPages) {
+    const text = textOf(html.get(page.path) ?? "");
+    const hits = [...new Set(text.match(CLAIMS) ?? [])].filter(
+      (hit) => !confirmed.includes(hit.toLowerCase()),
+    );
+    for (const hit of hits) {
+      const at = text.toLowerCase().indexOf(hit.toLowerCase());
+      problems.push({
+        message: `${page.path} promises "${hit}": "…${text.slice(Math.max(0, at - 30), at + hit.length + 30)}…"`,
+        fix: "Remove it, or (only if the client confirmed it) add the wording to business.claims.",
+        file: rel(page.file),
+      });
+    }
+  }
+  check("L15", "src/lib/business.ts", "no unconfirmed promises on any page", problems);
+}
+
+// ---------------------------------------------------------------------------------------------
 // Output
 
-const order = ["BUILD", ...Array.from({ length: 14 }, (_, i) => `L${i + 1}`)];
+const order = ["BUILD", ...Array.from({ length: 15 }, (_, i) => `L${i + 1}`)];
 results.sort((a, b) => order.indexOf(a.id) - order.indexOf(b.id));
 const fails = results.filter((r) => r.status === "FAIL");
 const warns = results.filter((r) => r.status === "WARN");

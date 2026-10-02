@@ -19,7 +19,7 @@ export const Route = createFileRoute("/thank-you")({
 const STEPS = [
   "We will review your request",
   "We will call or email you within one business day",
-  "Free estimate, no obligation",
+  "Free estimate",
 ];
 
 /** "test" → "Test": the name as typed, with a capital first letter. */
