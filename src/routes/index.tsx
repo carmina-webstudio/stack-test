@@ -124,7 +124,7 @@ function Index() {
             >
               How it works
             </h2>
-            <div className="mt-8 grid gap-8 md:grid-cols-3">
+            <div className="mt-8 grid gap-8 lg:grid-cols-3">
               {steps.map((step, index) => (
                 <div key={step.title} className="flex items-start gap-4">
                   <div className="flex size-12 shrink-0 items-center justify-center rounded-md bg-accent text-accent-foreground">

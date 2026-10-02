@@ -1,6 +1,13 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { AlertCircle, ChevronDown, Clock3, Loader2, PhoneCall } from "lucide-react";
-import { useState, type ChangeEvent, type FormEvent, type ReactNode } from "react";
+import {
+  useLayoutEffect,
+  useRef,
+  useState,
+  type ChangeEvent,
+  type FormEvent,
+  type ReactNode,
+} from "react";
 import { SiteFooter, SiteHeader } from "@/components/SiteHeader";
 import { Button } from "@/components/ui/button";
 import { business } from "@/lib/business";
@@ -165,6 +172,16 @@ function QuotePage() {
   const [values, setValues] = useState<Values>(EMPTY);
   const [errors, setErrors] = useState<Errors>({});
   const [status, setStatus] = useState<"idle" | "sending" | "failed">("idle");
+  // Where the cursor goes in the phone field after it's reformatted while typing. Applied in the
+  // same render (not a frame later), so a fast next keystroke can't land in the wrong place.
+  const phoneCaret = useRef<{ input: HTMLInputElement; at: number } | null>(null);
+  useLayoutEffect(() => {
+    const pending = phoneCaret.current;
+    phoneCaret.current = null;
+    if (pending && document.activeElement === pending.input) {
+      pending.input.setSelectionRange(pending.at, pending.at);
+    }
+  }, [values.phone]);
 
   // Shared props for each field: id, name, value, aria wiring and the change/blur rules.
   const fieldProps = (field: FieldName, describedBy: string[] = []) => {
@@ -190,10 +207,10 @@ function QuotePage() {
               plusOne,
           );
           value = formatPhoneAsTyped(value, deleting);
-          const caret = atEnd ? value.length : caretAfterDigits(value, before);
-          requestAnimationFrame(() => {
-            if (document.activeElement === input) input.setSelectionRange(caret, caret);
-          });
+          phoneCaret.current = {
+            input,
+            at: atEnd ? value.length : caretAfterDigits(value, before),
+          };
         }
         setValues((v) => ({ ...v, [field]: value }));
         // Clear an error the moment the value is valid (or keep its wording current).
