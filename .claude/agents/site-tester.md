@@ -56,14 +56,11 @@ in `business.ts` or in content Carmina gave: years in business, licensed, insure
 guarantees, prices, reviews, ratings, awards, "best", "#1", "top-rated", "trusted by". List each
 with its file and line. List every `[PLACEHOLDER: ...]` from the check output.
 
-## 4. Deploy preview (only when a PR is open)
+## 4. Deploy preview: not yours
 
-Find the Netlify deploy preview link in the Netlify bot's comment on the PR. Open it and send one
-real form submission: name `TEST <today's date>`, an `@example.com` email, valid phone, a service,
-city and message. It must land on the site's own `/thank-you` page showing the first name, not
-Netlify's generic "Thank you" page. On a live client site (`siteStatus: "live"`) do **not**
-submit unless Carmina has said so, because it emails the owner. If you can't open the preview,
-say so.
+You can't open Netlify deploy previews (the sandbox network blocks netlify.app, and spec sites
+are Netlify Private). Don't try. The real form submission on the preview is Carmina's check
+(see the report, "Carmina checks by eye").
 
 ## 5. Process
 
@@ -85,6 +82,10 @@ Return exactly this, short and in plain language:
 5. **Not checked:** anything you couldn't run (and why).
 6. **Carmina checks by eye:**
    - Tap Call Now on her real phone: it dials the business number.
-   - The owner's notification email arrives in the inbox (not spam), and Reply goes to the
-     customer's email address.
+   - Only when the PR changes the quote form, `public/__forms.html` or the thank-you page
+     (`git diff --name-only origin/main...HEAD`): one real submission on the deploy preview with
+     name `TEST <today's date>` and an `@example.com` email (or her own inbox). It must land on
+     the site's own thank-you page showing the first name, not Netlify's generic page; the owner
+     email arrives in the inbox (not spam) and Reply goes to the customer. On a live client site
+     (`siteStatus: "live"`) only with the client's OK, because it emails the owner.
    - Add the site to a phone home screen / bookmark: the favicon is the client's logo or initials.

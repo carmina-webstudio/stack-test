@@ -9,7 +9,7 @@ Token use: one session per task. Once the PR for this task is merged, say the se
 
 ## How changes flow
 - Lovable builds and edits this site and syncs with the `main` branch. Never commit directly to `main`, never force-push, never rewrite history.
-- Carmina decides what to change. You make the change on a branch, open the PR, and check the Netlify deploy preview (the link is in the Netlify bot's comment on the PR). If you can't open the preview, say so.
+- Carmina decides what to change. You make the change on a branch, open the PR, and send her the Netlify deploy preview link (in the Netlify bot's comment on the PR). Claude can't open Netlify previews (sandbox network + Netlify Private), so don't try; Carmina checks the preview.
 - Send her the preview link once the GitHub Actions run ("Site tests") is green. Merge only after she writes "approve".
 - PRs into `main`: use **Squash and merge**, then delete the branch.
 - One pull request per task. Keep changes focused; don't reformat or touch unrelated files.
@@ -64,7 +64,7 @@ Token use: one session per task. Once the PR for this task is merged, say the se
 ## Testing
 - **Layer 1, static check** (`npm run check`, `scripts/site-check.ts`): seconds, no browser. Reads `business.ts`, `tests/site.config.ts`, the source and the built pages in `.output/public`; prints a PASS / FAIL / WARN table with a fix hint per row and the placeholders still to fill. Runs on every Netlify deploy (`npm run build && npm run check`): a FAIL stops the deploy and the site keeps its last good version.
 - **Layer 2, browser tests** (`npm run test:e2e`, Playwright in `tests/`): every page and element at phone 375, tablet 768, laptop 1280x560, desktop 1440 and wide 2880, in Chromium and WebKit (iPhone Safari). Full-page screenshots go to `test-results/screens/` (gitignored). Runs in GitHub Actions on every PR into `main` or `production` and every push to `main`; the report and screenshots are a downloadable artifact for 7 days.
-- **Layer 3, site-tester agent** (`.claude/agents/site-tester.md`): runs layers 1 and 2, reviews every screenshot against a visual rubric, flags unsupported claims, checks the deploy preview form and the process rules, and writes the report. Read-only.
+- **Layer 3, site-tester agent** (`.claude/agents/site-tester.md`): runs layers 1 and 2, reviews every screenshot against a visual rubric, flags unsupported claims, checks the process rules, and writes the report. Read-only. It can't open Netlify previews; when a PR changes the quote form, `public/__forms.html` or the thank-you page, its report asks Carmina to send one real form submission on the preview.
 - **Layer 4, gates**: Netlify runs the static check on every deploy; GitHub Actions runs everything.
 - Adding a page: add the route, add it to `tanstackStart.pages` in `vite.config.ts` and to `pages` in `tests/site.config.ts` (the check fails until all three match). Adding a homepage section: add it to `homeSections` (label the `<section>` with `aria-labelledby` on its heading). Changing nav or form fields: update `nav` / `quoteForm` in `tests/site.config.ts`. For a new client, change data in `business.ts` and `tests/site.config.ts`, not the tests.
 - Never weaken or delete a test to make it pass. Fix the site, or mark the test `test.fixme("reason")` and tell Carmina.
@@ -86,4 +86,4 @@ Every new lesson adds a line here AND a check or test in the same PR.
 - PR #14: short pages (quote, thank-you, 404) left an empty band under the footer on tall screens → page wrapper is a flex column with a growing `<main>`. Test "footer sits at the bottom of the screen".
 - PR #14: the thank-you page promised "no obligation", which the client never gave → only promises listed in `business.claims` may appear on a page. Check L15.
 - Lovable can commit straight to `main` without a PR (its framework update on 2026-10-01 changed TanStack versions and `__root.tsx`) → GitHub Actions also runs on every push to `main`.
-- Test form submissions use only @example.com addresses or Carmina's own inbox (a real submit emails the owner). Tests intercept every POST; the site-tester submits once on the deploy preview only.
+- Test form submissions use only @example.com addresses or Carmina's own inbox (a real submit emails the owner). Tests intercept every POST; the only real submission is Carmina's, on the deploy preview, and only when a PR changes the form, `__forms.html` or the thank-you page.

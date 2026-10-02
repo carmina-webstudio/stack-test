@@ -184,6 +184,33 @@ test("network failure: visible error, typed data kept, phone number offered", as
   }
 });
 
+test("phone number takes its (123) 456-7890 shape while typing", async ({ page }) => {
+  const formatted = quoteForm.fields.filter((f) => f.asYouType);
+  expect(formatted.length).toBeGreaterThan(0);
+  for (const f of formatted) {
+    const input = field(page, f.label);
+    for (const sample of f.asYouType!) {
+      await input.fill("");
+      await input.pressSequentially(sample.type);
+      await expect(input, `typing "${sample.type}"`).toHaveValue(sample.shows);
+    }
+    // Backspace still works past the added ") " and "-".
+    await input.fill("");
+    await input.pressSequentially("123456");
+    await expect(input).toHaveValue("(123) 456-");
+    await input.press("Backspace");
+    await input.press("Backspace");
+    await expect(input).toHaveValue("(123) 45");
+    // Fixing a digit in the middle keeps the cursor there.
+    await input.fill("");
+    await input.pressSequentially("4255550123");
+    await input.evaluate((el) => (el as HTMLInputElement).setSelectionRange(7, 7)); // "(425) 5|"
+    await input.press("Backspace");
+    await input.pressSequentially("7");
+    await expect(input).toHaveValue("(425) 755-0123");
+  }
+});
+
 test("honeypot is hidden from people and not reachable with Tab", async ({ page }) => {
   const honeypot = page.locator(`[name="${quoteForm.honeypot}"]`);
   await expect(honeypot).toBeHidden();

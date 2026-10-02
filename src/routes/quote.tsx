@@ -26,7 +26,7 @@ const labelClass = "block text-sm font-semibold text-foreground";
 
 // Keep public/__forms.html in sync when the services change.
 const SERVICES = business.services.map((service) => service.name);
-const MESSAGE_MIN = 20;
+const MESSAGE_MIN = 10;
 const MESSAGE_MAX = 1000;
 
 type FieldName = "name" | "phone" | "email" | "city" | "service" | "message";
@@ -50,6 +50,31 @@ function phoneDigits(value: string): string | null {
 
 function formatPhone(digits: string) {
   return `(${digits.slice(0, 3)}) ${digits.slice(3, 6)}-${digits.slice(6)}`;
+}
+
+/**
+ * Formats the phone number while it's typed: "123456" → "(123) 456-". A "+1" country code (or
+ * an 11-digit number starting with 1, e.g. pasted) is dropped; at most 10 digits. While
+ * deleting, the trailing ") " or "-" isn't added back, so Backspace works.
+ */
+function formatPhoneAsTyped(raw: string, deleting: boolean) {
+  let d = raw.replace(/\D/g, "");
+  if (raw.trim().startsWith("+1") || (d.length === 11 && d.startsWith("1"))) d = d.slice(1);
+  d = d.slice(0, 10);
+  if (!d) return "";
+  if (d.length < 3 || (d.length === 3 && deleting)) return `(${d}`;
+  if (d.length < 6 || (d.length === 6 && deleting)) return `(${d.slice(0, 3)}) ${d.slice(3)}`;
+  return `(${d.slice(0, 3)}) ${d.slice(3, 6)}-${d.slice(6)}`;
+}
+
+/** Caret position in `formatted` right after the n-th digit (to keep the caret in place). */
+function caretAfterDigits(formatted: string, n: number) {
+  if (n === 0) return formatted.startsWith("(") ? 1 : 0;
+  let seen = 0;
+  for (let i = 0; i < formatted.length; i++) {
+    if (/\d/.test(formatted.charAt(i)) && ++seen === n) return i + 1;
+  }
+  return formatted.length;
 }
 
 function validate(field: FieldName, raw: string): string | undefined {
@@ -152,7 +177,24 @@ function QuotePage() {
       "aria-invalid": error ? true : undefined,
       "aria-describedby": ids.length ? ids.join(" ") : undefined,
       onChange: (e: ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
-        const value = e.target.value;
+        let value = e.target.value;
+        if (field === "phone") {
+          const input = e.target as HTMLInputElement;
+          const deleting = (e.nativeEvent as InputEvent).inputType?.startsWith("delete") ?? false;
+          const atEnd = input.selectionStart === value.length;
+          // Digits before the caret (not counting a "+1" country code), to put it back after.
+          const plusOne = value.trim().startsWith("+1") ? 1 : 0;
+          const before = Math.max(
+            0,
+            value.slice(0, input.selectionStart ?? value.length).replace(/\D/g, "").length -
+              plusOne,
+          );
+          value = formatPhoneAsTyped(value, deleting);
+          const caret = atEnd ? value.length : caretAfterDigits(value, before);
+          requestAnimationFrame(() => {
+            if (document.activeElement === input) input.setSelectionRange(caret, caret);
+          });
+        }
         setValues((v) => ({ ...v, [field]: value }));
         // Clear an error the moment the value is valid (or keep its wording current).
         // New errors only appear on blur or submit, not while someone is still typing.

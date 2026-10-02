@@ -91,6 +91,8 @@ export type FormField = {
   valid: string;
   /** Optional: a wrong value and the error it should show. */
   invalid?: { value: string; error: RegExp };
+  /** Optional: what the field shows while typing, e.g. "123456" → "(123) 456-". */
+  asYouType?: { type: string; shows: string }[];
 };
 
 export const quoteForm = {
@@ -130,6 +132,15 @@ export const quoteForm = {
       required: true,
       valid: "4255550123",
       invalid: { value: "425555", error: /10-digit/i },
+      asYouType: [
+        { type: "1", shows: "(1" },
+        { type: "4", shows: "(4" },
+        { type: "425", shows: "(425) " },
+        { type: "123456", shows: "(123) 456-" },
+        { type: "4255550123", shows: "(425) 555-0123" },
+        { type: "+1 425 555 0123", shows: "(425) 555-0123" },
+        { type: "42555501239", shows: "(425) 555-0123" },
+      ],
     },
     {
       name: "email",
@@ -163,6 +174,8 @@ export const quoteForm = {
       autocomplete: "",
       required: true,
       valid: "Weekly mowing for a small front lawn, starting next month.",
+      // 9 characters: one under the 10-character minimum.
+      invalid: { value: "Mow lawn.", error: /at least 10 characters/i },
     },
   ] satisfies FormField[] as FormField[],
 };
