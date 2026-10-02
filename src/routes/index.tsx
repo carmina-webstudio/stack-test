@@ -34,19 +34,7 @@ const steps = [
   },
 ];
 
-const faqs = [
-  {
-    q: "What area do you serve?",
-    a: "Bothell and nearby cities in King and Snohomish counties.",
-  },
-  { q: "Are estimates free?", a: "Yes, estimates are free." },
-  {
-    q: "How fast do you respond?",
-    a: "We reply to quote requests within one business day.",
-  },
-];
-
-const { address } = business;
+const { address, faqs } = business;
 const heading = `${business.trade} in ${address.city}, ${address.region}`;
 
 export const Route = createFileRoute("/")({
@@ -66,7 +54,12 @@ function Index() {
       <SiteHeader />
 
       <main>
-        <section className="hero-pattern relative overflow-hidden bg-hero text-primary-foreground">
+        {/* Each section is labelled by its heading, so screen readers (and the tests) can find
+            it by name. */}
+        <section
+          aria-labelledby="hero-heading"
+          className="hero-pattern relative overflow-hidden bg-hero text-primary-foreground"
+        >
           {/* Height follows the content (no full-screen sizing), so the next section always
               peeks in below and zooming out doesn't stretch the hero. */}
           <div className="relative mx-auto w-full max-w-6xl px-4 py-12 sm:px-6 sm:py-12 lg:px-8 lg:py-10">
@@ -74,7 +67,10 @@ function Index() {
               <p className="mb-3 text-sm font-bold uppercase tracking-widest text-accent">
                 {address.city}, {address.regionName}
               </p>
-              <h1 className="font-heading text-4xl font-extrabold leading-tight sm:text-4xl lg:whitespace-nowrap lg:text-[2.75rem]">
+              <h1
+                id="hero-heading"
+                className="font-heading text-4xl font-extrabold leading-tight sm:text-4xl lg:whitespace-nowrap lg:text-[2.75rem]"
+              >
                 {heading}
               </h1>
               <p className="mt-4 max-w-2xl text-lg leading-relaxed text-primary-foreground/85 sm:text-lg">
@@ -120,10 +116,15 @@ function Index() {
           </div>
         </section>
 
-        <section className="bg-background py-16 sm:py-14">
+        <section aria-labelledby="how-it-works-heading" className="bg-background py-16 sm:py-14">
           <div className="reveal mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
-            <h2 className="font-heading text-3xl font-extrabold text-foreground">How it works</h2>
-            <div className="mt-8 grid gap-8 md:grid-cols-3">
+            <h2
+              id="how-it-works-heading"
+              className="font-heading text-3xl font-extrabold text-foreground"
+            >
+              How it works
+            </h2>
+            <div className="mt-8 grid gap-8 lg:grid-cols-3">
               {steps.map((step, index) => (
                 <div key={step.title} className="flex items-start gap-4">
                   <div className="flex size-12 shrink-0 items-center justify-center rounded-md bg-accent text-accent-foreground">
@@ -144,9 +145,18 @@ function Index() {
           </div>
         </section>
 
-        <section id="services" className="scroll-mt-20 bg-secondary py-16 sm:py-14">
+        <section
+          id="services"
+          aria-labelledby="services-heading"
+          className="scroll-mt-20 bg-secondary py-16 sm:py-14"
+        >
           <div className="reveal mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
-            <h2 className="font-heading text-3xl font-extrabold text-foreground">Services</h2>
+            <h2
+              id="services-heading"
+              className="font-heading text-3xl font-extrabold text-foreground"
+            >
+              Services
+            </h2>
             <div className="mt-8 grid gap-5 sm:grid-cols-3">
               {business.services.map((service, index) => {
                 const Icon = SERVICE_ICONS[index] ?? Sprout;
@@ -171,9 +181,15 @@ function Index() {
           </div>
         </section>
 
-        <section id="faq" className="scroll-mt-20 bg-background py-16 sm:py-14">
+        <section
+          id="faq"
+          aria-labelledby="faq-heading"
+          className="scroll-mt-20 bg-background py-16 sm:py-14"
+        >
           <div className="reveal mx-auto max-w-3xl px-4 sm:px-6">
-            <h2 className="font-heading text-3xl font-extrabold text-foreground">FAQ</h2>
+            <h2 id="faq-heading" className="font-heading text-3xl font-extrabold text-foreground">
+              FAQ
+            </h2>
             {/* Native <details>: every answer stays in the page HTML (readable by Google and AI
                 tools even when collapsed), several can be open at once, and it works without JS. */}
             <div className="mt-8 border-t border-border">

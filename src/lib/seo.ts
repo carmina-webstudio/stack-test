@@ -1,7 +1,20 @@
 // Head tags and JSON-LD schema for every page, built from src/lib/business.ts.
-// The noindex robots tag lives in src/routes/__root.tsx so it covers every page at once.
+// Values still marked as placeholders in business.ts are left out of tags and schema.
 
-import { absoluteUrl, business, type PublicPage } from "@/lib/business";
+import { absoluteUrl, business, filled, type Faq, type PublicPage } from "@/lib/business";
+
+/** While the site is a spec every page is noindex; once live, only public pages are indexable. */
+function robotsContent(isPublic: boolean) {
+  return business.siteStatus === "live" && isPublic
+    ? "index, follow, max-image-preview:large"
+    : "noindex, nofollow";
+}
+
+/** Absolute URL of the share image, or "" while it's a placeholder. */
+function shareImageUrl() {
+  const image = filled(business.shareImage);
+  return image ? absoluteUrl(image) : "";
+}
 
 type PageHeadOptions = {
   /** Page title; " | <business name>" is added after it. */
@@ -19,12 +32,13 @@ export function pageHead({ title, description, path, schema }: PageHeadOptions) 
   const meta: Record<string, string>[] = [
     { title: fullTitle },
     { name: "description", content: description },
+    { name: "robots", content: robotsContent(Boolean(path)) },
   ];
   const links: { rel: string; href: string }[] = [];
 
   if (path) {
     const url = absoluteUrl(path);
-    const image = business.shareImage ? absoluteUrl(business.shareImage) : "";
+    const image = shareImageUrl();
     links.push({ rel: "canonical", href: url });
     meta.push(
       { property: "og:title", content: fullTitle },
@@ -58,9 +72,12 @@ export function pageHead({ title, description, path, schema }: PageHeadOptions) 
 
 const BUSINESS_ID = absoluteUrl("/#business");
 
-/** LocalBusiness node. Empty facts (street, postal code, hours, profiles) are left out. */
+/** LocalBusiness node. Empty or placeholder facts (street, postal code, hours, profiles) are
+ * left out. */
 export function localBusinessSchema() {
-  const { address } = business;
+  const { address, hours, sameAs } = business;
+  const streetAddress = filled(address.streetAddress);
+  const postalCode = filled(address.postalCode);
   const logo = absoluteUrl(business.logo);
   return {
     "@type": business.schemaType,
@@ -69,26 +86,27 @@ export function localBusinessSchema() {
     name: business.name,
     description: business.description,
     telephone: business.phone.schema,
-    image: business.shareImage ? absoluteUrl(business.shareImage) : logo,
+    image: shareImageUrl() || logo,
     logo,
     address: {
       "@type": "PostalAddress",
-      ...(address.streetAddress && { streetAddress: address.streetAddress }),
+      ...(streetAddress && { streetAddress }),
       addressLocality: address.city,
       addressRegion: address.region,
-      ...(address.postalCode && { postalCode: address.postalCode }),
+      ...(postalCode && { postalCode }),
       addressCountry: address.country,
     },
     areaServed: areaServedSchema(),
-    ...(business.hours.length > 0 && {
-      openingHoursSpecification: business.hours.map((rule) => ({
-        "@type": "OpeningHoursSpecification",
-        dayOfWeek: rule.days.map((day) => `https://schema.org/${day}`),
-        opens: rule.opens,
-        closes: rule.closes,
-      })),
-    }),
-    ...(business.sameAs.length > 0 && { sameAs: business.sameAs }),
+    ...(Array.isArray(hours) &&
+      hours.length > 0 && {
+        openingHoursSpecification: hours.map((rule) => ({
+          "@type": "OpeningHoursSpecification",
+          dayOfWeek: rule.days.map((day) => `https://schema.org/${day}`),
+          opens: rule.opens,
+          closes: rule.closes,
+        })),
+      }),
+    ...(Array.isArray(sameAs) && sameAs.length > 0 && { sameAs }),
   };
 }
 
@@ -109,7 +127,7 @@ export function serviceSchemas() {
 }
 
 /** FAQPage node from the same questions and answers the page shows. */
-export function faqSchema(faqs: { q: string; a: string }[]) {
+export function faqSchema(faqs: readonly Faq[]) {
   return {
     "@type": "FAQPage",
     mainEntity: faqs.map((faq) => ({

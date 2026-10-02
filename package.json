@@ -6,8 +6,10 @@
   "scripts": {
     "dev": "vite dev",
     "build": "vite build",
+    "check": "node --experimental-strip-types --disable-warning=ExperimentalWarning scripts/site-check.ts",
     "build:dev": "vite build --mode development",
     "preview": "vite preview",
+    "test:e2e": "playwright test",
     "lint": "eslint .",
     "format": "prettier --write ."
   },
@@ -69,8 +71,10 @@
     "zod": "^3.25.76"
   },
   "devDependencies": {
+    "@axe-core/playwright": "^4.13.0",
     "@eslint/js": "^9.32.0",
     "@lovable.dev/vite-tanstack-config": "^2.24.0",
+    "@playwright/test": "^1.63.0",
     "@types/node": "^22.16.5",
     "@types/react": "^19.2.0",
     "@types/react-dom": "^19.2.0",

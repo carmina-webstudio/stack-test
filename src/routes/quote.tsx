@@ -1,6 +1,13 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { AlertCircle, ChevronDown, Clock3, Loader2, PhoneCall } from "lucide-react";
-import { useState, type ChangeEvent, type FormEvent, type ReactNode } from "react";
+import {
+  useLayoutEffect,
+  useRef,
+  useState,
+  type ChangeEvent,
+  type FormEvent,
+  type ReactNode,
+} from "react";
 import { SiteFooter, SiteHeader } from "@/components/SiteHeader";
 import { Button } from "@/components/ui/button";
 import { business } from "@/lib/business";
@@ -26,7 +33,7 @@ const labelClass = "block text-sm font-semibold text-foreground";
 
 // Keep public/__forms.html in sync when the services change.
 const SERVICES = business.services.map((service) => service.name);
-const MESSAGE_MIN = 20;
+const MESSAGE_MIN = 10;
 const MESSAGE_MAX = 1000;
 
 type FieldName = "name" | "phone" | "email" | "city" | "service" | "message";
@@ -50,6 +57,31 @@ function phoneDigits(value: string): string | null {
 
 function formatPhone(digits: string) {
   return `(${digits.slice(0, 3)}) ${digits.slice(3, 6)}-${digits.slice(6)}`;
+}
+
+/**
+ * Formats the phone number while it's typed: "123456" → "(123) 456-". A "+1" country code (or
+ * an 11-digit number starting with 1, e.g. pasted) is dropped; at most 10 digits. While
+ * deleting, the trailing ") " or "-" isn't added back, so Backspace works.
+ */
+function formatPhoneAsTyped(raw: string, deleting: boolean) {
+  let d = raw.replace(/\D/g, "");
+  if (raw.trim().startsWith("+1") || (d.length === 11 && d.startsWith("1"))) d = d.slice(1);
+  d = d.slice(0, 10);
+  if (!d) return "";
+  if (d.length < 3 || (d.length === 3 && deleting)) return `(${d}`;
+  if (d.length < 6 || (d.length === 6 && deleting)) return `(${d.slice(0, 3)}) ${d.slice(3)}`;
+  return `(${d.slice(0, 3)}) ${d.slice(3, 6)}-${d.slice(6)}`;
+}
+
+/** Caret position in `formatted` right after the n-th digit (to keep the caret in place). */
+function caretAfterDigits(formatted: string, n: number) {
+  if (n === 0) return formatted.startsWith("(") ? 1 : 0;
+  let seen = 0;
+  for (let i = 0; i < formatted.length; i++) {
+    if (/\d/.test(formatted.charAt(i)) && ++seen === n) return i + 1;
+  }
+  return formatted.length;
 }
 
 function validate(field: FieldName, raw: string): string | undefined {
@@ -140,6 +172,16 @@ function QuotePage() {
   const [values, setValues] = useState<Values>(EMPTY);
   const [errors, setErrors] = useState<Errors>({});
   const [status, setStatus] = useState<"idle" | "sending" | "failed">("idle");
+  // Where the cursor goes in the phone field after it's reformatted while typing. Applied in the
+  // same render (not a frame later), so a fast next keystroke can't land in the wrong place.
+  const phoneCaret = useRef<{ input: HTMLInputElement; at: number } | null>(null);
+  useLayoutEffect(() => {
+    const pending = phoneCaret.current;
+    phoneCaret.current = null;
+    if (pending && document.activeElement === pending.input) {
+      pending.input.setSelectionRange(pending.at, pending.at);
+    }
+  }, [values.phone]);
 
   // Shared props for each field: id, name, value, aria wiring and the change/blur rules.
   const fieldProps = (field: FieldName, describedBy: string[] = []) => {
@@ -152,7 +194,24 @@ function QuotePage() {
       "aria-invalid": error ? true : undefined,
       "aria-describedby": ids.length ? ids.join(" ") : undefined,
       onChange: (e: ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
-        const value = e.target.value;
+        let value = e.target.value;
+        if (field === "phone") {
+          const input = e.target as HTMLInputElement;
+          const deleting = (e.nativeEvent as InputEvent).inputType?.startsWith("delete") ?? false;
+          const atEnd = input.selectionStart === value.length;
+          // Digits before the caret (not counting a "+1" country code), to put it back after.
+          const plusOne = value.trim().startsWith("+1") ? 1 : 0;
+          const before = Math.max(
+            0,
+            value.slice(0, input.selectionStart ?? value.length).replace(/\D/g, "").length -
+              plusOne,
+          );
+          value = formatPhoneAsTyped(value, deleting);
+          phoneCaret.current = {
+            input,
+            at: atEnd ? value.length : caretAfterDigits(value, before),
+          };
+        }
         setValues((v) => ({ ...v, [field]: value }));
         // Clear an error the moment the value is valid (or keep its wording current).
         // New errors only appear on blur or submit, not while someone is still typing.
@@ -223,11 +282,13 @@ function QuotePage() {
   const sending = status === "sending";
   const messageLength = values.message.length;
 
+  // Flex column: on short pages the main area grows, so the footer sits at the bottom of the
+  // screen instead of leaving an empty band below it.
   return (
-    <div className="min-h-screen bg-background">
+    <div className="flex min-h-screen flex-col bg-background">
       <SiteHeader />
 
-      <main className="bg-secondary py-10 sm:py-12">
+      <main className="flex-1 bg-secondary py-10 sm:py-12">
         <div className="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
           <h1 className="font-heading text-3xl font-extrabold text-foreground sm:text-4xl">
             Get a Free Quote
